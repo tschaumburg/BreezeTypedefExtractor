@@ -1,0 +1,20 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<PackageManifest Version="2.0.0" xmlns="http://schemas.microsoft.com/developer/vsx-schema/2011" xmlns:d="http://schemas.microsoft.com/developer/vsx-schema-design/2011">
+  <Metadata>
+    <Identity Id="BreezeTypeDefs.Thomas Schaumburg.59bd1218-c60d-4671-8fa5-cda7a977bd67" Version="1.0" Language="en-US" Publisher="Thomas Schaumburg" />
+    <DisplayName>BreezeTypeDefs</DisplayName>
+    <Description>Empty VSIX Project.</Description>
+  </Metadata>
+  <Installation>
+    <InstallationTarget Id="Microsoft.VisualStudio.Community" Version="[14.0]" />
+  </Installation>
+  <Dependencies>
+    <Dependency Id="Microsoft.Framework.NDP" DisplayName="Microsoft .NET Framework" d:Source="Manual" Version="[4.5,)" />
+    <Dependency Id="Microsoft.VisualStudio.MPF.14.0" DisplayName="Visual Studio MPF 14.0" d:Source="Installed" Version="[14.0]" />
+  </Dependencies>
+  <Assets>
+    <!--<Asset Type="Microsoft.VisualStudio.VsPackage" d:Source="Project" d:ProjectName="%CurrentProject%" Path="|%CurrentProject%;PkgdefProjectOutputGroup|" />-->
+    <Asset Type="Microsoft.VisualStudio.ItemTemplate" d:Source="Project" d:TargetPath="|BreezeinfoTemplate;TemplateProjectOutputGroup|" Path="ItemTemplates" d:VsixSubPath="ItemTemplates" d:ProjectName="BreezeinfoTemplate" />
+    <Asset Type="Microsoft.VisualStudio.Assembly" d:Source="File" Path="Assemblies\BreezeInfoWizard.dll" AssemblyName="BreezeInfoWizard, Version=1.0.0.0, Culture=neutral, PublicKeyToken=1e59d51fff151715" />
+  </Assets>
+</PackageManifest>

@@ -1,0 +1,27 @@
+﻿<BreezeService>
+  <!--
+  The MetadataUrl specifies the address where the Breeze.js runtime will fetch 
+  its type information.
+  
+  Remember that a Breeze service metadata conventionally ends in /Metadata - i.e. 
+  if your Breeze service lives at http://myserver:1234/data, the metadata url 
+  should probably be http://myserver:1234/data/Metadata
+  -->
+  <MetadataUrl>
+    $MetadataUrl$
+  </MetadataUrl>
+ 
+  <!--
+  Output
+  ======
+  Specify the language output(s) you want - currently only "typescript" is supported.
+  
+  The Typescript generator supports the following additional attributes:
+  - framework (none|angular|knockout)
+  - namespace
+  -->
+  <Output>
+    <Typescript framework="$TypescriptFramework$" namespace="$TypescriptNamespace$" extension="d.ts"/>
+  </Output>
+  <!--<Output language="$OutputLanguage$" framework="$TypescriptFramework$" namespace="$TypescriptNamespace$"/>-->
+</BreezeService>

@@ -1,11 +1,11 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <VSTemplate Version="3.0.0" Type="Item" xmlns="http://schemas.microsoft.com/developer/vstemplate/2005" xmlns:sdk="http://schemas.microsoft.com/developer/vstemplate-sdkextension/2010">
   <TemplateData>
-    <Name>Breeze Service Reference 5</Name>
-    <Description>BreezeinfoTemplate</Description>
-    <Icon>BreezeinfoTemplate.ico</Icon>
-    <PreviewImage>BreezeinfoTemplate.ico</PreviewImage>
-    <TemplateID>e225ca7d-8913-4ba9-a4d5-10f7b5cd7dc1</TemplateID>
+    <Name>Breeze Service Reference</Name>
+    <Description>Adds a reference to a Breeze data service</Description>
+    <Icon>NodeTemplate.ico</Icon>
+    <PreviewImage>NodeTemplate.ico</PreviewImage>
+    <TemplateID>3110d8ca-5e54-41dd-b10d-c36858358ac1</TemplateID>
     <!--<AppliesTo></AppliesTo>-->
     <ProjectType>Node.js</ProjectType>
     <RequiredFrameworkVersion>2.0</RequiredFrameworkVersion>
@@ -13,16 +13,11 @@
     <DefaultName>BreezeService.breezeinfo</DefaultName>
   </TemplateData>
   <TemplateContent>
-    <References>
-      <Reference>
-        <Assembly>System</Assembly>
-      </Reference>
-    </References>
     <ProjectItem ReplaceParameters="true">template.breezeinfo</ProjectItem>
   </TemplateContent>
   <WizardExtension>
     <!--<Assembly>BreezeInfoWizard</Assembly><FullClassName>BreezeInfoWizard.Wizard</FullClassName>-->
-    <Assembly>BreezeInfoWizard, Version=1.0.0.0, Culture=neutral, PublicKeyToken=1e59d51fff151715</Assembly>
-    <FullClassName>BreezeInfoWizard.Wizard</FullClassName>
+    <Assembly>TemplateWizard, Version=1.0.0.0, Culture=neutral, PublicKeyToken=1e59d51fff151715</Assembly>
+    <FullClassName>TemplateWizard.Wizard</FullClassName>
   </WizardExtension>
 </VSTemplate>

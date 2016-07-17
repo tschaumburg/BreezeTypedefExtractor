@@ -22,7 +22,7 @@ namespace BreezeTypeDefs
     /// <summary>
     /// Command handler
     /// </summary>
-    internal sealed class BreezeTypeDefsCommand
+    internal sealed class UpdateCommand
     {
         /// <summary>
         /// Command ID.
@@ -40,11 +40,11 @@ namespace BreezeTypeDefs
         private readonly Package package;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="BreezeTypeDefsCommand"/> class.
+        /// Initializes a new instance of the <see cref="UpdateCommand"/> class.
         /// Adds our command handlers for menu (commands must exist in the command table file)
         /// </summary>
         /// <param name="package">Owner package, not null.</param>
-        private BreezeTypeDefsCommand(Package package)
+        private UpdateCommand(Package package)
         {
             if (package == null)
             {
@@ -72,7 +72,7 @@ namespace BreezeTypeDefs
         /// <summary>
         /// Gets the instance of the command.
         /// </summary>
-        public static BreezeTypeDefsCommand Instance
+        public static UpdateCommand Instance
         {
             get;
             private set;
@@ -95,7 +95,7 @@ namespace BreezeTypeDefs
         /// <param name="package">Owner package, not null.</param>
         public static void Initialize(Package package)
         {
-            Instance = new BreezeTypeDefsCommand(package);
+            Instance = new UpdateCommand(package);
         }
 
         /// <summary>
@@ -215,7 +215,7 @@ namespace BreezeTypeDefs
                     .AddItem(
                         itemid,
                         VSADDITEMOPERATION.VSADDITEMOP_OPENFILE,
-                        sourceFile,
+                        generatedFile, //sourceFile,
                         1,
                         new string[1] { generatedFile },
                         IntPtr.Zero,

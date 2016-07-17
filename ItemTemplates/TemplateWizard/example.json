@@ -1,0 +1,214 @@
+{
+    "schema": {
+        "namespace": "Pontifex.DAL.Model",
+        "alias": "Self",
+        "annotation:UseStrongSpatialTypes": "false",
+        "xmlns:annotation": "http://schemas.microsoft.com/ado/2009/02/edm/annotation",
+        "xmlns:customannotation": "http://schemas.microsoft.com/ado/2013/11/edm/customannotation",
+        "xmlns": "http://schemas.microsoft.com/ado/2009/11/edm",
+        "cSpaceOSpaceMapping": "[[\"Pontifex.DAL.Model.Board\",\"Pontifex.DAL.Model.Board\"],[\"Pontifex.DAL.Model.BoardSeries\",\"Pontifex.DAL.Model.BoardSeries\"],[\"Pontifex.DAL.Model.BoardScore\",\"Pontifex.DAL.Model.BoardScore\"]]",
+        "entityType": [
+            {
+                "name": "Board",
+                "customannotation:ClrType": "Pontifex.DAL.Model.Board, Pontifex.DAL, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null",
+                "key": { "propertyRef": { "name": "Id" } },
+                "property": [
+                    {
+                        "name": "Id",
+                        "type": "Edm.Int32",
+                        "nullable": "false",
+                        "annotation:StoreGeneratedPattern": "Identity"
+                    },
+                    {
+                        "name": "Name",
+                        "type": "Edm.String",
+                        "maxLength": "Max",
+                        "fixedLength": "false",
+                        "unicode": "true"
+                    },
+                    {
+                        "name": "BoardSeriesId",
+                        "type": "Edm.Int32",
+                        "nullable": "false"
+                    }
+                ],
+                "navigationProperty": [
+                    {
+                        "name": "BoardSeries",
+                        "relationship": "Self.BoardSeries_Boards",
+                        "fromRole": "BoardSeries_Boards_Target",
+                        "toRole": "BoardSeries_Boards_Source"
+                    },
+                    {
+                        "name": "Scores",
+                        "relationship": "Self.BoardScore_Board",
+                        "fromRole": "BoardScore_Board_Target",
+                        "toRole": "BoardScore_Board_Source"
+                    }
+                ]
+            },
+            {
+                "name": "BoardSeries",
+                "customannotation:ClrType": "Pontifex.DAL.Model.BoardSeries, Pontifex.DAL, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null",
+                "key": { "propertyRef": { "name": "Id" } },
+                "property": [
+                    {
+                        "name": "Id",
+                        "type": "Edm.Int32",
+                        "nullable": "false",
+                        "annotation:StoreGeneratedPattern": "Identity"
+                    },
+                    {
+                        "name": "Name",
+                        "type": "Edm.String",
+                        "maxLength": "Max",
+                        "fixedLength": "false",
+                        "unicode": "true"
+                    }
+                ],
+                "navigationProperty": {
+                    "name": "Boards",
+                    "relationship": "Self.BoardSeries_Boards",
+                    "fromRole": "BoardSeries_Boards_Source",
+                    "toRole": "BoardSeries_Boards_Target"
+                }
+            },
+            {
+                "name": "BoardScore",
+                "customannotation:ClrType": "Pontifex.DAL.Model.BoardScore, Pontifex.DAL, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null",
+                "key": { "propertyRef": { "name": "Id" } },
+                "property": [
+                    {
+                        "name": "Id",
+                        "type": "Edm.Int32",
+                        "nullable": "false",
+                        "annotation:StoreGeneratedPattern": "Identity"
+                    },
+                    {
+                        "name": "BoardId",
+                        "type": "Edm.Int32",
+                        "nullable": "false"
+                    },
+                    {
+                        "name": "Score",
+                        "type": "Edm.Int32",
+                        "nullable": "false"
+                    },
+                    {
+                        "name": "Count",
+                        "type": "Edm.Int32",
+                        "nullable": "false"
+                    }
+                ],
+                "navigationProperty": {
+                    "name": "Board",
+                    "relationship": "Self.BoardScore_Board",
+                    "fromRole": "BoardScore_Board_Source",
+                    "toRole": "BoardScore_Board_Target"
+                }
+            }
+        ],
+        "association": [
+            {
+                "name": "BoardSeries_Boards",
+                "end": [
+                    {
+                        "role": "BoardSeries_Boards_Source",
+                        "type": "Edm.Self.BoardSeries",
+                        "multiplicity": "1",
+                        "onDelete": { "action": "Cascade" }
+                    },
+                    {
+                        "role": "BoardSeries_Boards_Target",
+                        "type": "Edm.Self.Board",
+                        "multiplicity": "*"
+                    }
+                ],
+                "referentialConstraint": {
+                    "principal": {
+                        "role": "BoardSeries_Boards_Source",
+                        "propertyRef": { "name": "Id" }
+                    },
+                    "dependent": {
+                        "role": "BoardSeries_Boards_Target",
+                        "propertyRef": { "name": "BoardSeriesId" }
+                    }
+                }
+            },
+            {
+                "name": "BoardScore_Board",
+                "end": [
+                    {
+                        "role": "BoardScore_Board_Source",
+                        "type": "Edm.Self.BoardScore",
+                        "multiplicity": "*"
+                    },
+                    {
+                        "role": "BoardScore_Board_Target",
+                        "type": "Edm.Self.Board",
+                        "multiplicity": "1",
+                        "onDelete": { "action": "Cascade" }
+                    }
+                ],
+                "referentialConstraint": {
+                    "principal": {
+                        "role": "BoardScore_Board_Target",
+                        "propertyRef": { "name": "Id" }
+                    },
+                    "dependent": {
+                        "role": "BoardScore_Board_Source",
+                        "propertyRef": { "name": "BoardId" }
+                    }
+                }
+            }
+        ],
+        "entityContainer": {
+            "name": "BoardDbContext",
+            "customannotation:UseClrTypes": "true",
+            "entitySet": [
+                {
+                    "name": "Boards",
+                    "entityType": "Self.Board"
+                },
+                {
+                    "name": "BoardSeries",
+                    "entityType": "Self.BoardSeries"
+                },
+                {
+                    "name": "Scores",
+                    "entityType": "Self.BoardScore"
+                }
+            ],
+            "associationSet": [
+                {
+                    "name": "BoardSeries_Boards",
+                    "association": "Self.BoardSeries_Boards",
+                    "end": [
+                        {
+                            "role": "BoardSeries_Boards_Source",
+                            "entitySet": "BoardSeries"
+                        },
+                        {
+                            "role": "BoardSeries_Boards_Target",
+                            "entitySet": "Boards"
+                        }
+                    ]
+                },
+                {
+                    "name": "BoardScore_Board",
+                    "association": "Self.BoardScore_Board",
+                    "end": [
+                        {
+                            "role": "BoardScore_Board_Source",
+                            "entitySet": "Scores"
+                        },
+                        {
+                            "role": "BoardScore_Board_Target",
+                            "entitySet": "Boards"
+                        }
+                    ]
+                }
+            ]
+        }
+    }
+}

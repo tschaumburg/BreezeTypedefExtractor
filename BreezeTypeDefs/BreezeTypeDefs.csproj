@@ -42,6 +42,8 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <DeployExtension>True</DeployExtension>
+    <CopyVsixExtensionFiles>False</CopyVsixExtensionFiles>
+    <CopyVsixExtensionLocation>C:\Users\Thomas\AppData\Local\Microsoft\VisualStudio\14.0Exp\Extensions\Thomas Schaumburg</CopyVsixExtensionLocation>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -53,7 +55,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Generators\BreezeTypeDefGenerator.cs" />
-    <Compile Include="BreezeTypeDefsCommand.cs" />
+    <Compile Include="Commands\UpdateCommand.cs" />
     <Compile Include="BreezeTypeDefsPackage.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -74,19 +76,18 @@
       <IncludeInVSIX>true</IncludeInVSIX>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Assemblies\BreezeInfoWizard.pdb">
-      <IncludeInVSIX>true</IncludeInVSIX>
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
     <Content Include="Assemblies\Microsoft.VisualStudio.TemplateWizardInterface.dll">
       <IncludeInVSIX>true</IncludeInVSIX>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Assemblies\Microsoft.VisualStudio.TemplateWizardInterface.xml">
-      <IncludeInVSIX>true</IncludeInVSIX>
+    <Content Include="Resources\breezejs.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
-    <Content Include="Resources\BreezeTypeDefsCommand.png" />
+    <Content Include="Resources\BreezeTypeDefsCommand.png">
+      <IncludeInVSIX>true</IncludeInVSIX>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="Resources\BreezeTypeDefsPackage.ico" />
   </ItemGroup>
   <ItemGroup>
@@ -229,16 +230,30 @@
       <Project>{79878989-dea8-468e-afde-0a12901f5fb5}</Project>
       <Name>BreezeGenerators</Name>
     </ProjectReference>
-    <ProjectReference Include="..\BreezeinfoTemplate\BreezeinfoTemplate.csproj">
-      <Project>{180BD347-7281-4F53-8F2C-796105F7AE1E}</Project>
-      <Name>BreezeinfoTemplate</Name>
+    <ProjectReference Include="..\ItemTemplates\JavascriptTemplate\JavascriptTemplate.csproj">
+      <Project>{BDDAFDAB-A330-4704-9815-740BF2FD43D7}</Project>
+      <Name>JavascriptTemplate</Name>
       <VSIXSubPath>ItemTemplates</VSIXSubPath>
       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
       <IncludeOutputGroupsInVSIX>TemplateProjectOutputGroup%3b</IncludeOutputGroupsInVSIX>
     </ProjectReference>
-    <ProjectReference Include="..\BreezeInfoWizard\BreezeInfoWizard.csproj">
-      <Project>{8cf3019d-6a09-4e11-b507-31464c8f79e2}</Project>
-      <Name>BreezeInfoWizard</Name>
+    <ProjectReference Include="..\ItemTemplates\NodeTemplate\NodeTemplate.csproj">
+      <Project>{A666FE8C-7A95-4AA7-A77B-AD0F3FBB393B}</Project>
+      <Name>NodeTemplate</Name>
+      <VSIXSubPath>ItemTemplates</VSIXSubPath>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      <IncludeOutputGroupsInVSIX>TemplateProjectOutputGroup%3b</IncludeOutputGroupsInVSIX>
+    </ProjectReference>
+    <ProjectReference Include="..\ItemTemplates\TemplateWizard\TemplateWizard.csproj">
+      <Project>{a958832f-434b-4748-a3bd-99f652951457}</Project>
+      <Name>TemplateWizard</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ItemTemplates\TypescriptTemplate\TypescriptTemplate.csproj">
+      <Project>{0D7F1E59-EC37-406C-B1B7-7D09D6DC66F5}</Project>
+      <Name>TypescriptTemplate</Name>
+      <VSIXSubPath>ItemTemplates</VSIXSubPath>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      <IncludeOutputGroupsInVSIX>TemplateProjectOutputGroup%3b</IncludeOutputGroupsInVSIX>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
@@ -252,7 +267,8 @@
   </Target>
   <Import Project="..\packages\Microsoft.VSSDK.BuildTools.14.3.25407\build\Microsoft.VSSDK.BuildTools.targets" Condition="Exists('..\packages\Microsoft.VSSDK.BuildTools.14.3.25407\build\Microsoft.VSSDK.BuildTools.targets')" />
   <PropertyGroup>
-    <PreBuildEvent>copy /Y "$(ProjectDir)..\BreezeInfoWizard\bin\Debug\BreezeInfoWizard.*" "$(ProjectDir)Assemblies\"</PreBuildEvent>
+    <PreBuildEvent>copy /Y "$(ProjectDir)..\BreezeInfoWizard\bin\Debug\BreezeInfoWizard.*" "$(ProjectDir)Assemblies\"
+copy /Y "$(ProjectDir)..\ItemTemplates\TemplateWizard\bin\Debug\TemplateWizard.*" "$(ProjectDir)Assemblies\"</PreBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

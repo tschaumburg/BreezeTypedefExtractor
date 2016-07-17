@@ -68,7 +68,7 @@ namespace BreezeTypeDefs
         protected override void Initialize()
         {
             base.Initialize();
-            BreezeTypeDefsCommand.Initialize(this);
+            UpdateCommand.Initialize(this);
         }
 
         #endregion

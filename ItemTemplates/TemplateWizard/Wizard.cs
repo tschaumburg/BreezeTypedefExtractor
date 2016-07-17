@@ -6,9 +6,9 @@ using System.Text;
 using System.Threading.Tasks;
 using EnvDTE;
 
-namespace BreezeinfoTemplate
+namespace TemplateWizard
 {
-    class BreezeinfoWizard : IWizard
+    public class Wizard : IWizard
     {
         public void BeforeOpeningFile(ProjectItem projectItem)
         {
@@ -28,16 +28,16 @@ namespace BreezeinfoTemplate
 
         public void RunStarted(object automationObject, Dictionary<string, string> replacementsDictionary, WizardRunKind runKind, object[] customParams)
         {
-            //var wizardDlg = new BreezeinfoWizardWindow();
+            var wizardDlg = new BreezeinfoWizardWindow();
 
-            ////  Show the form.
-            //wizardDlg.ShowDialog();
+            //  Show the form.
+            wizardDlg.ShowDialog();
 
-            ////  Add the options to the replacementsDictionary.
-            //replacementsDictionary.Add("$MetadataUrl$", wizardDlg.MetadataUrl);
-            //replacementsDictionary.Add("$OutputLanguage$", wizardDlg.OutputLanguage);
-            //replacementsDictionary.Add("$TypescriptFramework$", wizardDlg.TypescriptFramework);
-            //replacementsDictionary.Add("$TypescriptNamespace$", wizardDlg.TypescriptNamespace);
+            //  Add the options to the replacementsDictionary.
+            replacementsDictionary.Add("$MetadataUrl$", wizardDlg.MetadataUrl);
+            replacementsDictionary.Add("$OutputLanguage$", wizardDlg.OutputLanguage);
+            replacementsDictionary.Add("$TypescriptFramework$", wizardDlg.TypescriptFramework);
+            replacementsDictionary.Add("$TypescriptNamespace$", wizardDlg.TypescriptNamespace);
         }
 
         public bool ShouldAddProjectItem(string filePath)

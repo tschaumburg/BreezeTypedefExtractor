@@ -3,26 +3,21 @@
   <TemplateData>
     <Name>Breeze Service Reference 5</Name>
     <Description>BreezeinfoTemplate</Description>
-    <Icon>BreezeinfoTemplate.ico</Icon>
-    <PreviewImage>BreezeinfoTemplate.ico</PreviewImage>
-    <TemplateID>e225ca7d-8913-4ba9-a4d5-10f7b5cd7dc1</TemplateID>
+    <Icon>TypescriptTemplate.ico</Icon>
+    <PreviewImage>TypescriptTemplate.ico</PreviewImage>
+    <TemplateID>09464fe5-9f06-4962-a305-57a7dfee35a7</TemplateID>
     <!--<AppliesTo></AppliesTo>-->
-    <ProjectType>Node.js</ProjectType>
+    <ProjectType>TypeScript</ProjectType>
     <RequiredFrameworkVersion>2.0</RequiredFrameworkVersion>
     <NumberOfParentCategoriesToRollUp>7</NumberOfParentCategoriesToRollUp>
     <DefaultName>BreezeService.breezeinfo</DefaultName>
   </TemplateData>
   <TemplateContent>
-    <References>
-      <Reference>
-        <Assembly>System</Assembly>
-      </Reference>
-    </References>
     <ProjectItem ReplaceParameters="true">template.breezeinfo</ProjectItem>
   </TemplateContent>
   <WizardExtension>
     <!--<Assembly>BreezeInfoWizard</Assembly><FullClassName>BreezeInfoWizard.Wizard</FullClassName>-->
-    <Assembly>BreezeInfoWizard, Version=1.0.0.0, Culture=neutral, PublicKeyToken=1e59d51fff151715</Assembly>
-    <FullClassName>BreezeInfoWizard.Wizard</FullClassName>
+    <Assembly>TemplateWizard, Version=1.0.0.0, Culture=neutral, PublicKeyToken=1e59d51fff151715</Assembly>
+    <FullClassName>TemplateWizard.Wizard</FullClassName>
   </WizardExtension>
 </VSTemplate>

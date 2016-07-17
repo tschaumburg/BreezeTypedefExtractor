@@ -41,7 +41,8 @@ namespace BreezeTypeDefs.Generators
 
             // Preload the metadata:
             // =====================
-            var metadata = GetMetadata(Path.ChangeExtension(breezeinfiFileName, "metadata"), breezeUrl);
+            var metadataCacheFilename = Path.ChangeExtension(breezeinfiFileName, "metadata");
+            var metadata = GetMetadata(metadataCacheFilename, breezeUrl);
 
             // Get the output elements:
             // ========================
@@ -56,9 +57,12 @@ namespace BreezeTypeDefs.Generators
                 if (language == null)
                     throw new ApplicationException("Every Output element must have a language attribute");
 
-                var filelist = await BreezeGenerator.StartGeneration(language, GetAllAttributes(generatorElement), breezeinfiFileName, metadata);
+                var serviceUrl = breezeUrl.Replace("/Metadata", "");
+                var filelist = await BreezeGenerator.StartGeneration(language, GetAllAttributes(generatorElement), breezeinfiFileName, metadata, serviceUrl);
                 generatedFiles.AddRange(filelist);
             }
+
+            generatedFiles.Add(metadataCacheFilename);
 
             return generatedFiles;
         }
@@ -113,6 +117,9 @@ namespace BreezeTypeDefs.Generators
             }
             catch (Exception e)
             {
+                if (!File.Exists(cacheFilename))
+                    throw new AggregateException("Error trying to load metadata from " + url, e);
+
                 return File.ReadAllText(cacheFilename);
             }
         }

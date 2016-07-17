@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -11,7 +12,7 @@ namespace BreezeGenerators
 {
     public class BreezeGenerator
     {
-        public static async Task<List<string>> StartGeneration(string language, Dictionary<string, string> attributes, string sourceFilename, string metadataString)
+        public static async Task<List<string>> StartGeneration(string language, Dictionary<string, string> attributes, string sourceFilename, string metadataString, string serviceUrl)
         {
             // Find the generator script file:
             var scriptPath = FindScript(Path.GetDirectoryName(sourceFilename), language);
@@ -22,6 +23,7 @@ namespace BreezeGenerators
             var jsonParameters = new JObject();
             jsonParameters.Add("sourceFile", sourceFilename);
             jsonParameters.Add("metadata", metadataString);
+            jsonParameters.Add("url", serviceUrl);
             // add additional attributes:
             var jsonAttributes = new JObject();
             foreach (var kvp in attributes)
@@ -54,7 +56,27 @@ namespace BreezeGenerators
                 }
             }
 
+            if (attributes.ContainsKey("proxyname"))
+            {
+                string breezeextenionsFilename = Path.Combine(Path.GetDirectoryName(sourceFilename), "breezeextensions.ts");
+                string breezeextensionsContents = GetEmbeddedResource("breezeextensions.ts");
+                File.WriteAllText(breezeextenionsFilename, breezeextensionsContents);
+                filelist.Add(breezeextenionsFilename);
+            }
+
             return filelist;
+        }
+
+        private static string GetEmbeddedResource(string filename)
+        {
+            var assembly = Assembly.GetExecutingAssembly();
+            var resourceName = assembly.GetName().Name + "." + filename;
+
+            using (Stream stream = assembly.GetManifestResourceStream(resourceName))
+            using (StreamReader reader = new StreamReader(stream))
+            {
+                return reader.ReadToEnd();
+            }
         }
 
         private static string FindScript(string breezeinfoDir, string language)
@@ -68,7 +90,9 @@ namespace BreezeGenerators
                 return customizedScriptPath;
 
             // Then look for the standard generator distributed with this extension:
-            var standardScriptPath = Path.Combine(Directory.GetCurrentDirectory(), scriptFile);
+            var thisDllFullname = Assembly.GetExecutingAssembly().Location;
+            var thisDllDirname = Path.GetDirectoryName(thisDllFullname);
+            var standardScriptPath = Path.Combine(thisDllDirname, scriptFile);
             if (File.Exists(standardScriptPath))
                 return standardScriptPath;
 

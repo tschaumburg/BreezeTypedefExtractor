@@ -1,5 +1,17 @@
 # BreezeTypedefExtractor
-Visual Studio extension extracting typedefs from a Breeze data service
+Visual Studio extension generating and managing typed references to Breeze data service.
+
+A typed Breeze reference can be used as follows from Typescript:
+
+    var t = 
+      new OrdersServer("https://...")
+      .Customers
+      .where(cust => cust.Orders.any(order => order.delDate.after(Date.now)))
+      .execute();
+
+And the above is fully typed - giving you Intellisense, and compile-time checking of field names, types, comparison operators, etc. 
+
+See the Features section below.
 
 ##Installing
 The easiest way to install is to install the Visual Studio extension (see below).

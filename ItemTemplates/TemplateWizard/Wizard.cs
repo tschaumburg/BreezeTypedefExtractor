@@ -5,6 +5,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using EnvDTE;
+using System.Reflection;
+using System.IO;
 
 namespace TemplateWizard
 {
@@ -44,5 +46,35 @@ namespace TemplateWizard
         {
             return true;
         }
+
+        public static Dictionary<string, string> CreateBreezeReference()
+        {
+            var wizardDlg = new BreezeinfoWizardWindow();
+            var template = GetEmbeddedResource("template.breezeinfo");
+
+            //  Show the form.
+            wizardDlg.ShowDialog();
+
+            template = template.Replace("$MetadataUrl$", wizardDlg.MetadataUrl);
+            template = template.Replace("$OutputLanguage$", wizardDlg.OutputLanguage);
+            template = template.Replace("$TypescriptFramework$", wizardDlg.TypescriptFramework);
+            template = template.Replace("$TypescriptNamespace$", wizardDlg.TypescriptNamespace);
+            var name = wizardDlg.ReferenceName; ;
+
+            return new Dictionary<string, string> { { name, template } };
+        }
+
+        private static string GetEmbeddedResource(string filename)
+        {
+            var assembly = Assembly.GetExecutingAssembly();
+            var resourceName = assembly.GetName().Name + "." + filename;
+
+            using (Stream stream = assembly.GetManifestResourceStream(resourceName))
+            using (StreamReader reader = new StreamReader(stream))
+            {
+                return reader.ReadToEnd();
+            }
+        }
+
     }
 }

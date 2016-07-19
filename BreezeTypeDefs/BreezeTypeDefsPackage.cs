@@ -69,6 +69,9 @@ namespace BreezeTypeDefs
         {
             base.Initialize();
             UpdateCommand.Initialize(this);
+            AddToProjectCommand.Initialize(this);
+            AddToFolderCommand.Initialize(this);
+            AddToReferencesCommand.Initialize(this);
         }
 
         #endregion

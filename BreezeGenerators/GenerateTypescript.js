@@ -46,6 +46,8 @@ module.exports = function ( data, callback )
     var metadataStore = new breeze.MetadataStore();
     metadataStore.importMetadata( metadata );
 
+    AnnotateMetadata( metadataStore, _namespace, framework, generateTypedQueries );
+
     // Generate the type definitions:
     var typedefs = GenerateTypedefs( metadataStore, _namespace, framework, generateTypedQueries );
 
@@ -74,19 +76,101 @@ module.exports = function ( data, callback )
     callback( null, result );
 };
 
+function AnnotateMetadata( metadataStore, namespace, format, generateTypedQueries )
+{
+    var types = metadataStore.getEntityTypes();
+    for ( i = 0; i < types.length; i++ )
+    {
+        // type declaration
+        var type = types[i];
+        annotateTypeDefinition( type, format );
+    }
+
+    function annotateTypeDefinition( type, format )
+    {
+        type.btg = {};
+        type.btg.className = type.shortName;
+        type.btg.metadataName = type.shortName + 'Query';
+        //type.btg.classReference = 'typedef.' + type.shortName;
+
+        // data properties
+        for ( j = 0; j < type.dataProperties.length; j++ )
+        {
+            property = type.dataProperties[j];
+            property.btg = {};
+            property.btg.propertyName = property.name;
+            property.dataType.btg = {};
+            property.dataType.btg.typeReference = getJSType( property.dataType.name );
+            property.dataType.btg.metadataName = getJSTypeInfo( property.dataType.name );
+        }
+
+        // navigation properties
+        for ( j = 0; j < type.navigationProperties.length; j++ )
+        {
+            property = type.navigationProperties[j];
+            property.btg = {};
+            property.btg.propertyName = property.name;
+        }
+    }
+
+    function getJSType( metadataType )
+    {
+        if ( /(Int64)|(Int32)|(Int16)|(Byte)|(Decimal)|(Double)|(Single)|(number)/.test( metadataType ) )
+            return 'number';
+        else if ( /(DateTime)|(DateTimeOffset)|(Time)|(Date)/.test( metadataType ) )
+            return 'Date';
+        else if ( /(Boolean)/i.test( metadataType ) )
+            return 'boolean';
+        return 'string';
+    }
+
+    function getJSTypeInfo( metadataType )
+    {
+        if ( /(Int64)|(Int32)|(Int16)|(Byte)|(Decimal)|(Double)|(Single)|(number)/.test( metadataType ) )
+            return 'NumberFieldInfo';
+        else if ( /(DateTime)|(DateTimeOffset)|(Time)|(Date)/.test( metadataType ) )
+            return 'DateFieldInfo';
+        else if ( /(Boolean)/i.test( metadataType ) )
+            return 'BooleanFieldInfo';
+        return 'StringFieldInfo';
+    }
+}
+
 function GenerateTypedefs( metadataStore, declareModule, format, generateTypedQueries )
 {
+    var crlf = String.fromCharCode( 13 );
+    var prefix = "";
+    var typedefs = "";
+    var suffix = "";
+
+    if ( declareModule )
+    {
+        prefix += 'declare module ' + declareModule + '.typedefs' + crlf;
+        prefix += '{' + crlf;
+        suffix += '}' + crlf;
+    }
+
+    var types = metadataStore.getEntityTypes();
+    for ( i = 0; i < types.length; i++ )
+    {
+        // type declaration
+        var type = types[i];
+        typedefs += generateTypeDefinition( type, format );
+    }
+
+    return prefix + typedefs + suffix;
+
     function generateTypeDefinition( type, format )
     {
         var crlf = String.fromCharCode( 13 );
         var html = '';
-        html += '   export interface ' + type.shortName;
+        html += '   export interface ' + type.btg.className;
 
         // base type
         html += ' extends ';
         if ( type.hasOwnProperty( 'baseEntityType' ) )
         {
-            html += type.baseEntityType.shortName;
+            html += type.baseEntityType.btg.className;
         } else
         {
             html += 'breeze.Entity';
@@ -140,14 +224,10 @@ function GenerateTypedefs( metadataStore, declareModule, format, generateTypedQu
 
     function generateDataPropertyDefinitionPOTSO( property )
     {
-        var crlf = String.fromCharCode( 13 );
+        //var crlf = String.fromCharCode( 13 );
         var propertyDef = '';
-        propertyDef += '      ' + property.name;
-        //if (property.isNullable)
-        //    propertyDef += '?';
-        propertyDef += ': ';
-        propertyDef += getJSType( property.dataType.name );
-        propertyDef += '; //' + property.dataType.name + crlf;
+        propertyDef += '      ' + property.btg.propertyName + ': ' +  property.dataType.btg.typeReference;
+        propertyDef += ';' + crlf;
 
         return propertyDef;
     }
@@ -179,52 +259,14 @@ function GenerateTypedefs( metadataStore, declareModule, format, generateTypedQu
 
     function generateNavigationPropertyDefinitionPOTSO( property )
     {
-        var crlf = String.fromCharCode( 13 );
-        var propertyDef = '';
-        propertyDef += '      ' + property.name;
-        //if (property.isNullable)
-        //    html += '?';
-        if ( property.isScalar )
-            propertyDef += ': ' + property.entityType.shortName + ';';
-        else
-            propertyDef += ': ' + property.entityType.shortName + '[];';
-        propertyDef += crlf;
+        //var crlf = String.fromCharCode( 13 );
+        var propertyDef = '      ' + property.btg.propertyName + ': ' + property.entityType.btg.className;
+        if ( !property.isScalar )
+            propertyDef += '[]';
+        propertyDef += ';' + crlf;
 
         return propertyDef;
     }
-
-    function getJSType( metadataType )
-    {
-        if ( /(Int64)|(Int32)|(Int16)|(Byte)|(Decimal)|(Double)|(Single)|(number)/.test( metadataType ) )
-            return 'number';
-        else if ( /(DateTime)|(DateTimeOffset)|(Time)|(Date)/.test( metadataType ) )
-            return 'Date';
-        else if ( /(Boolean)/i.test( metadataType ) )
-            return 'boolean';
-        return 'string';
-    }
-
-    var crlf = String.fromCharCode( 13 );
-    var prefix = "";
-    var typedefs = "";
-    var suffix = "";
-
-    if ( declareModule )
-    {
-        prefix += 'declare module ' + declareModule + '.typedefs' + crlf;
-        prefix += '{' + crlf;
-        suffix += '}' + crlf;
-    }
-
-    var types = metadataStore.getEntityTypes();
-    for ( i = 0; i < types.length; i++ )
-    {
-        // type declaration
-        var type = types[i];
-        typedefs += generateTypeDefinition( type, format );
-    }
-
-    return prefix + typedefs + suffix;
 }
 
 function GenerateProxy( proxyname, metadatajson, metadataStore, namespace, format, generateTypedQueries, url )
@@ -244,13 +286,32 @@ function GenerateProxy( proxyname, metadatajson, metadataStore, namespace, forma
         prefix += '   import querybuilder = ' + namespace + '.querybuilder;' + crlf;
         prefix += '   export class ' + proxyname + crlf;
         prefix += '   {' + crlf;
-        prefix += '      private _entityManager: breeze.EntityManager = null;' + crlf;        prefix += '      constructor(serverUrl: string);' + crlf;        prefix += '      constructor(breezeManager: breeze.EntityManager);' + crlf;        prefix += '      constructor(server: string | breeze.EntityManager = null)' + crlf;        prefix += '      {' + crlf;        prefix += '          if (server == null)' + crlf;        prefix += '          {' + crlf;        if ( !!url )
+        prefix += '      private _entityManager: breeze.EntityManager = null;' + crlf;
+        prefix += '      constructor(serverUrl: string);' + crlf;
+        prefix += '      constructor(breezeManager: breeze.EntityManager);' + crlf;
+        prefix += '      constructor(server: string | breeze.EntityManager = null)' + crlf;
+        prefix += '      {' + crlf;
+        prefix += '          if (server == null)' + crlf;
+        prefix += '          {' + crlf;
+        if ( !!url )
         {
             prefix += '              this._entityManager = new breeze.EntityManager("' + url + '");' + crlf;
-        }        else
+        }
+        else
         {
             prefix += '              throw "Cannot use a null or empty URL when connecting to a ' + proxyname + ' data service";' + crlf;
-        }        prefix += '          }' + crlf;        prefix += '          else if (typeof server === "string")' + crlf;        prefix += '          {' + crlf;        prefix += '              this._entityManager = new breeze.EntityManager(server as string);' + crlf;        prefix += '          }' + crlf;        prefix += '          else' + crlf;        prefix += '          {' + crlf;        prefix += '              this._entityManager = server as breeze.EntityManager;' + crlf;        prefix += '          }' + crlf;        prefix += '      }' + crlf;        suffix += '   }' + crlf;
+        }
+        prefix += '          }' + crlf;
+        prefix += '          else if (typeof server === "string")' + crlf;
+        prefix += '          {' + crlf;
+        prefix += '              this._entityManager = new breeze.EntityManager(server as string);' + crlf;
+        prefix += '          }' + crlf;
+        prefix += '          else' + crlf;
+        prefix += '          {' + crlf;
+        prefix += '              this._entityManager = server as breeze.EntityManager;' + crlf;
+        prefix += '          }' + crlf;
+        prefix += '      }' + crlf;
+        suffix += '   }' + crlf;
         suffix += '}' + crlf;
     }
 
@@ -302,35 +363,17 @@ function GenerateProxy( proxyname, metadatajson, metadataStore, namespace, forma
 
 function GenerateMetadata( metadataStore, namespace)
 {
-    function getJSTypeInfo( metadataType )
-    {
-        if ( /(Int64)|(Int32)|(Int16)|(Byte)|(Decimal)|(Double)|(Single)|(number)/.test( metadataType ) )
-            return 'NumberFieldInfo';
-        else if ( /(DateTime)|(DateTimeOffset)|(Time)|(Date)/.test( metadataType ) )
-            return 'DateFieldInfo';
-        else if ( /(Boolean)/i.test( metadataType ) )
-            return 'BooleanFieldInfo';
-        return 'StringFieldInfo';
-    }
-
-    function getMetadataclassName( type )
-    {
-        return type.shortName + 'Query'
-    }
-
     function primitiveInfoName(containingType, primitiveType )
     {
-        var thisMeta = getMetadataclassName( containingType );
-        var thisEntity = 'typedefs.' + containingType.shortName;
-        var primitive = 'extensions.' + getJSTypeInfo( primitiveType.name ); //NumberFieldInfo
-        return primitive + '<' + thisMeta + ', ' + thisEntity  + '>'; // extensions.NumberFieldInfo<OrderType, Order>
+        var thisEntity = 'typedefs.' + containingType.btg.className;
+        return 'extensions.' + primitiveType.btg.metadataName + '<' + containingType.btg.metadataName + ', ' + thisEntity + '>'; // extensions.NumberFieldInfo<OrderType, Order>
     }
 
     function generateTypeMetadata( type )
     {
-        var crlf = String.fromCharCode( 13 );
+        //var crlf = String.fromCharCode( 13 );
+        var metadataclassName = type.btg.metadataName;
         var metadata = '';
-        var metadataclassName = getMetadataclassName( type );
         metadata += '   export class ' + metadataclassName + crlf;
         metadata += '   {' + crlf;
         metadata += '      private static _instance: ' + metadataclassName + ' = null;' + crlf;
@@ -366,11 +409,12 @@ function GenerateMetadata( metadataStore, namespace)
     function generateDataPropertyMetadata(type, property )
     {
         var crlf = String.fromCharCode( 13 );
-        var thisMeta = getMetadataclassName( type );
+        var thisMeta = type.btg.metadataName;
         var metadataDef = '';
         propertyinfoName = primitiveInfoName( type, property.dataType );
 
-        metadataDef += '      public ' + property.name + ': ' + propertyinfoName + ' = new ' + propertyinfoName + '(' + thisMeta + '._instance, "' + property.name + '"); ' + crlf;
+        metadataDef += '      public ' + property.name + ': ' + propertyinfoName;
+        metadataDef += ' = new ' + propertyinfoName + '(' + thisMeta + '._instance, "' + property.name + '"); ' + crlf;
 
         return metadataDef;
     }
@@ -378,10 +422,10 @@ function GenerateMetadata( metadataStore, namespace)
     function generateNavigationPropertyMetadata( type, property )
     {
         var crlf = String.fromCharCode( 13 );
-        var thisMeta = getMetadataclassName( type );
+        var thisMeta = type.btg.metadataName;
         var thisEntity = 'typedefs.' + type.shortName;
 
-        var otherMeta = getMetadataclassName( property.entityType );
+        var otherMeta = property.entityType.btg.metadataName;
         var otherEntity = 'typedefs.' + property.entityType.shortName
 
         propertyinfoName = 'extensions.MultiAssociationFieldInfo<' + thisMeta + ', ' + thisEntity + ', ' + otherMeta + ', ' + otherEntity + '>';

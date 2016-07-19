@@ -54,6 +54,10 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Commands\AddCommandBase.cs" />
+    <Compile Include="Commands\AddToReferencesCommand.cs" />
+    <Compile Include="Commands\AddToFolderCommand.cs" />
+    <Compile Include="Commands\AddToProjectCommand.cs" />
     <Compile Include="Generators\BreezeTypeDefGenerator.cs" />
     <Compile Include="Commands\UpdateCommand.cs" />
     <Compile Include="BreezeTypeDefsPackage.cs" />
@@ -62,6 +66,9 @@
   <ItemGroup>
     <None Include=".bin\node.cmd" />
     <None Include="app.config" />
+    <Content Include="Commands\template.breezeinfo">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <None Include="Key.snk" />
     <None Include="packages.config" />
     <None Include="source.extension.vsixmanifest">
@@ -80,6 +87,9 @@
       <IncludeInVSIX>true</IncludeInVSIX>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="Resources\AddCommand.png" />
+    <Content Include="Resources\AddToFolderCommand.png" />
+    <Content Include="Resources\AddToReferencesCommand.png" />
     <Content Include="Resources\breezejs.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <IncludeInVSIX>true</IncludeInVSIX>
@@ -223,6 +233,7 @@
     <EmbeddedResource Include="VSPackage.resx">
       <MergeWithCTO>true</MergeWithCTO>
       <ManifestResourceName>VSPackage</ManifestResourceName>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

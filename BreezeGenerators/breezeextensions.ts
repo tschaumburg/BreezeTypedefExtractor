@@ -149,6 +149,9 @@
         constructor(builder: TEntityQueryBuilder, fieldname: string, comparison: string, value: any)
         {
             super(builder);
+            this.fieldname = fieldname;
+            this.comparison = comparison;
+            this.value = value;
         }
 
         public getBreezePredicate(): breeze.Predicate
@@ -164,10 +167,12 @@
         private p1: TPredicate<TEntityQueryBuilder, TEntity>;
         private op: PredicateOps;
         private p2: TPredicate<TEntityQueryBuilder, TEntity>;
-        private value: any;
         constructor(builder: TEntityQueryBuilder, p1: TPredicate<TEntityQueryBuilder, TEntity>, op: PredicateOps, p2: TPredicate<TEntityQueryBuilder, TEntity>)
         {
             super(builder);
+            this.p1 = p1;
+            this.op = op;
+            this.p2 = p2;
         }
 
         public getBreezePredicate(): breeze.Predicate
@@ -181,6 +186,25 @@
                 case PredicateOps.NOT:
                     return this.p1.getBreezePredicate().not();
             }
+        }
+    }
+
+    export class TRelatedPredicate<TEntityQueryBuilder, TEntity, TSubEntityQueryBuilder, TSubEntity> extends TPredicate<TEntityQueryBuilder, TEntity>
+    {
+        private fieldname: string;
+        private operation: breeze.FilterQueryOpSymbol;
+        private subPredicate: TPredicate<TSubEntityQueryBuilder, TSubEntity>;
+        constructor(builder: TEntityQueryBuilder, fieldname: string, operation: breeze.FilterQueryOpSymbol, subPredicate: TPredicate<TSubEntityQueryBuilder, TSubEntity>)
+        {
+            super(builder);
+            this.fieldname = fieldname;
+            this.operation = operation;
+            this.subPredicate = subPredicate;
+        }
+
+        public getBreezePredicate(): breeze.Predicate
+        {
+            return new breeze.Predicate(this.fieldname, this.operation, this.subPredicate.getBreezePredicate());
         }
     }
 
@@ -243,6 +267,80 @@
         }
     }
 
+    export class BooleanFieldInfo<TEntityQueryBuilder, TEntity> extends PrimitiveFieldInfo
+    {
+        private builder: TEntityQueryBuilder;
+        private membername: string;
+        constructor(builder: TEntityQueryBuilder, membername: string)
+        {
+            super();
+            this.membername = membername;
+            this.builder = builder;
+        }
+
+        public getFieldName(): string
+        {
+            return this.membername;
+        }
+
+        public equals(value: boolean): TPredicate<TEntityQueryBuilder, TEntity>
+        {
+            return new TSimplePredicate<TEntityQueryBuilder, TEntity>(this.builder, this.membername, "eq", value);
+        }
+
+        public true(): TPredicate<TEntityQueryBuilder, TEntity>
+        {
+            return new TSimplePredicate<TEntityQueryBuilder, TEntity>(this.builder, this.membername, "eq", true);
+        }
+
+        public false(): TPredicate<TEntityQueryBuilder, TEntity>
+        {
+            return new TSimplePredicate<TEntityQueryBuilder, TEntity>(this.builder, this.membername, "eq", false);
+        }
+    }
+
+    export class DateFieldInfo<TEntityQueryBuilder, TEntity> extends PrimitiveFieldInfo
+    {
+        private builder: TEntityQueryBuilder;
+        private membername: string;
+        constructor(builder: TEntityQueryBuilder, membername: string)
+        {
+            super();
+            this.membername = membername;
+            this.builder = builder;
+        }
+
+        public getFieldName(): string
+        {
+            return this.membername;
+        }
+
+        public equals(value: Date): TPredicate<TEntityQueryBuilder, TEntity>
+        {
+            return new TSimplePredicate<TEntityQueryBuilder, TEntity>(this.builder, this.membername, "eq", value);
+        }
+
+        public before(value: Date): TPredicate<TEntityQueryBuilder, TEntity>
+        {
+            return new TSimplePredicate<TEntityQueryBuilder, TEntity>(this.builder, this.membername, "<", value);
+        }
+
+        public notBefore(value: Date): TPredicate<TEntityQueryBuilder, TEntity>
+        {
+            return new TSimplePredicate<TEntityQueryBuilder, TEntity>(this.builder, this.membername, ">=", value);
+        }
+
+        public after(value: Date): TPredicate<TEntityQueryBuilder, TEntity>
+        {
+            return new TSimplePredicate<TEntityQueryBuilder, TEntity>(this.builder, this.membername, ">", value);
+        }
+
+        public notAfter(value: Date): TPredicate<TEntityQueryBuilder, TEntity>
+        {
+            return new TSimplePredicate<TEntityQueryBuilder, TEntity>(this.builder, this.membername, "<=", value);
+        }
+    }
+
     export class SingleAssociationFieldInfo<TEntityQueryBuilder, TEntity, TOtherEntityQueryBuilder, TOtherEntity>
     {
         private builder: TEntityQueryBuilder;
@@ -258,17 +356,21 @@
     export class MultiAssociationFieldInfo<TEntityQueryBuilder, TEntity, TOtherEntityQueryBuilder, TOtherEntity>
     {
         private builder: TEntityQueryBuilder;
+        private otherBuilder: TOtherEntityQueryBuilder;
         private membername: string;
-        constructor(builder: TEntityQueryBuilder, membername: string)
+        constructor(builder: TEntityQueryBuilder, membername: string, otherBuilder: TOtherEntityQueryBuilder)
         {
             //super();
             this.membername = membername;
             this.builder = builder;
+            this.otherBuilder = otherBuilder;
         }
 
         public any(querybuilder: (query: TOtherEntityQueryBuilder) => TPredicate<TOtherEntityQueryBuilder, TOtherEntity>): TPredicate<TEntityQueryBuilder, TEntity>
         {
-            return null;
+            var subPredicate = querybuilder(this.otherBuilder);
+            //new breeze.Predicate(this.membername, breeze.FilterQueryOp.Any, subPredicate.getBreezePredicate());
+            return new TRelatedPredicate<TEntityQueryBuilder, TEntity, TOtherEntityQueryBuilder, TOtherEntity>(this.builder, this.membername, breeze.FilterQueryOp.Any, subPredicate);
         }
     }
 }

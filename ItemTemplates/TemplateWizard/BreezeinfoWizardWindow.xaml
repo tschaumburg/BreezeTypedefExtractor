@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:TemplateWizard"
         mc:Ignorable="d"
-        Title="BreezeinfoWizardWindow" Height="300" Width="300">
+        Title="Add Breeze reference..." Height="250" Width="500">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="10"/>
@@ -22,26 +22,34 @@
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="auto"/>
             <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="auto"/>
         </Grid.ColumnDefinitions>
 
-        <TextBlock Grid.Row="1" Grid.Column="0" Margin="5">Metadata URL:</TextBlock>
-        <TextBox x:Name="MetadataBox" Grid.Row="1" Grid.Column="1" HorizontalAlignment="Stretch"></TextBox>
+        <TextBlock Grid.Row="1" Grid.Column="0" Margin="15,5">Reference name:</TextBlock>
+        <TextBox x:Name="NameBox" TextChanged="UpdateUI" Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2" Margin="15,0" HorizontalAlignment="Stretch"></TextBox>
 
-        <TextBlock Grid.Row="3" Grid.Column="0" Margin="5">Output language:</TextBlock>
+        <TextBlock Grid.Row="3" Grid.Column="0" Margin="15,5">Metadata URL:</TextBlock>
+        <TextBox x:Name="MetadataBox" TextChanged="UpdateUI" Grid.Row="3" Grid.Column="1" Margin="15,0" HorizontalAlignment="Stretch"></TextBox>
+        <Button Grid.Row="3" Grid.Column="2" Padding="10,0" Margin="0,0,15,0" Click="Button_Click_1">Test...</Button>
+
+        <!--<TextBlock Grid.Row="3" Grid.Column="0" Margin="15,5">Output language:</TextBlock>
         <ComboBox Grid.Row="3" Grid.Column="1" HorizontalAlignment="Stretch" SelectedValue="Typescript" IsEnabled="false">
             <ComboBoxItem>Typescript</ComboBoxItem>
         </ComboBox>
 
-        <TextBlock Grid.Row="5" Grid.Column="0" Margin="5">Typescript framework:</TextBlock>
+        <TextBlock Grid.Row="5" Grid.Column="0" Margin="15,5">Typescript framework:</TextBlock>
         <ComboBox x:Name="TypescriptFrameworkCombo" Grid.Row="5" Grid.Column="1" HorizontalAlignment="Stretch">
             <ComboBoxItem>None</ComboBoxItem>
             <ComboBoxItem>Angular</ComboBoxItem>
             <ComboBoxItem>Knockout</ComboBoxItem>
-        </ComboBox>
+        </ComboBox>-->
 
-        <TextBlock Grid.Row="7" Grid.Column="0" Margin="5">Typescript namespace:</TextBlock>
-        <TextBox x:Name="TypescriptNamespaceBox" Grid.Row="7" Grid.Column="1" HorizontalAlignment="Stretch"></TextBox>
+        <TextBlock Grid.Row="5" Grid.Column="0" Margin="15,5">Typescript namespace:</TextBlock>
+        <TextBox x:Name="TypescriptNamespaceBox" TextChanged="UpdateUI" Grid.Row="5" Grid.Column="1" Grid.ColumnSpan="2" Margin="15,0" HorizontalAlignment="Stretch"></TextBox>
 
-        <Button Grid.Row="9" Grid.Column="1" Margin="10" Padding="10,5" HorizontalAlignment="Right" Click="Button_Click">OK</Button>
+        <TextBlock Grid.Row="7" Grid.Column="0" Margin="15,5">Proxy name:</TextBlock>
+        <TextBox x:Name="ProxyNameBox" TextChanged="UpdateUI" Grid.Row="7" Grid.Column="1" Grid.ColumnSpan="2" Margin="15,0" HorizontalAlignment="Stretch"></TextBox>
+
+        <Button x:Name="OKButton" Grid.Row="9" Grid.Column="1" Margin="15" Padding="10,5" HorizontalAlignment="Right" Click="Button_Click">OK</Button>
     </Grid>
 </Window>

@@ -15,10 +15,10 @@
         defining some of the constants that we will use inside the file. -->
 
   <!--This is the file that defines the IDs for all the commands exposed by VisualStudio. -->
-  <Extern href="stdidcmd.h"/>
+  <Extern href="stdidcmd.h" />
 
   <!--This header contains the command ids for the menus provided by the shell. -->
-  <Extern href="vsshlids.h"/>
+  <Extern href="vsshlids.h" />
 
   <!--The Commands section is where commands, menus, and menu groups are defined.
       This section uses a Guid to identify the package that provides the command defined inside it. -->
@@ -37,8 +37,18 @@
          must be a menu. -->
     <Groups>
       <Group guid="guidBreezeTypeDefsPackageCmdSet" id="MyMenuGroup" priority="0x0600">
-        <Parent guid="guidSHLMainMenu" id="IDM_VS_CTXT_ITEMNODE"/>
+        <Parent guid="guidSHLMainMenu" id="IDM_VS_CTXT_ITEMNODE" />
         <!--<Parent guid="guidSHLMainMenu" id="IDM_VS_MENU_TOOLS"/>-->
+      </Group>
+      <Group guid="guidBreezeTypeDefsPackageCmdSet1" id="MyMenuGroup" priority="0x0600">
+        <Parent guid="guidSHLMainMenu" id="IDM_VS_CTXT_PROJNODE" />
+        <!--<Parent guid="guidSHLMainMenu" id="IDM_VS_MENU_TOOLS" />-->
+      </Group>
+      <Group guid="guidBreezeTypeDefsPackageCmdSet2" id="MyMenuGroup" priority="0x0600">
+        <Parent guid="guidSHLMainMenu" id="IDM_VS_CTXT_FOLDERNODE" />
+      </Group>
+      <Group guid="guidBreezeTypeDefsPackageCmdSet3" id="MyMenuGroup" priority="0x0600">
+        <Parent guid="guidSHLMainMenu" id="IDM_VS_CTXT_REFERENCEROOT" />
       </Group>
     </Groups>
 
@@ -56,13 +66,39 @@
       <Button guid="guidBreezeTypeDefsPackageCmdSet" id="BreezeTypeDefsCommandId" priority="0x0100" type="Button">
         <Parent guid="guidBreezeTypeDefsPackageCmdSet" id="MyMenuGroup" />
         <Icon guid="guidImages" id="bmpPic1" />
-        
-        <!-- the 2 lines below set the default visibility-->
         <!--<CommandFlag>DefaultInvisible</CommandFlag>-->
         <CommandFlag>DynamicVisibility</CommandFlag>
-        
         <Strings>
-          <ButtonText>Update Breeze type definitions</ButtonText>
+          <ButtonText>Update Breeze reference</ButtonText>
+        </Strings>
+      </Button>
+      
+      <!--Add to project-->
+      <Button guid="guidBreezeTypeDefsPackageCmdSet1" id="cmdidAddCommand" priority="0x0100" type="Button">
+        <Parent guid="guidBreezeTypeDefsPackageCmdSet1" id="MyMenuGroup" />
+        <Icon guid="guidImages" id="bmpPic1" />
+        <Strings>
+          <ButtonText>Add Breeze reference...</ButtonText>
+        </Strings>
+      </Button>
+      
+      <!--Add to "Breeze references" folder-->
+      <Button guid="guidBreezeTypeDefsPackageCmdSet2" id="cmdidAddToFolderCommand" priority="0x0100" type="Button">
+        <Parent guid="guidBreezeTypeDefsPackageCmdSet2" id="MyMenuGroup" />
+        <Icon guid="guidImages" id="bmpPic1" />
+        <Strings>
+          <ButtonText>Add Breeze reference...</ButtonText>
+        </Strings>
+      </Button>
+
+      <!--Add to "References" folder-->
+      <Button guid="guidBreezeTypeDefsPackageCmdSet3" id="cmdidAddToReferencesCommand" priority="0x0100" type="Button">
+        <Parent guid="guidBreezeTypeDefsPackageCmdSet3" id="MyMenuGroup" />
+        <Icon guid="guidImages" id="bmpPic1" />
+        <!--<CommandFlag>DefaultInvisible</CommandFlag>-->
+        <CommandFlag>DynamicVisibility</CommandFlag>
+        <Strings>
+          <ButtonText>Add Breeze reference...</ButtonText>
         </Strings>
       </Button>
     </Buttons>
@@ -74,7 +110,10 @@
             bitmap strip containing the bitmaps and then there are the numeric ids of the elements used
             inside a button definition. An important aspect of this declaration is that the element id
             must be the actual index (1-based) of the bitmap inside the bitmap strip. -->
-      <Bitmap guid="guidImages" href="Resources\BreezeTypeDefsCommand.png" usedList="bmpPic1, bmpPic2, bmpPicSearch, bmpPicX, bmpPicArrows, bmpPicStrikethrough"/>
+      <Bitmap guid="guidImages" href="Resources\BreezeTypeDefsCommand.png" usedList="bmpPic1, bmpPic2, bmpPicSearch, bmpPicX, bmpPicArrows, bmpPicStrikethrough" />
+      <Bitmap guid="guidImages1" href="Resources\AddCommand.png" usedList="bmpPic1, bmpPic2, bmpPicSearch, bmpPicX, bmpPicArrows, bmpPicStrikethrough" />
+      <Bitmap guid="guidImages2" href="Resources\AddToFolderCommand.png" usedList="bmpPic1, bmpPic2, bmpPicSearch, bmpPicX, bmpPicArrows, bmpPicStrikethrough" />
+      <Bitmap guid="guidImages3" href="Resources\AddToReferencesCommand.png" usedList="bmpPic1, bmpPic2, bmpPicSearch, bmpPicX, bmpPicArrows, bmpPicStrikethrough" />
     </Bitmaps>
   </Commands>
 
@@ -88,7 +127,49 @@
       <IDSymbol name="BreezeTypeDefsCommandId" value="0x0100" />
     </GuidSymbol>
 
-    <GuidSymbol name="guidImages" value="{afb8e09e-ec48-4f7b-9d12-ef324f4e4ec2}" >
+    <GuidSymbol name="guidImages" value="{afb8e09e-ec48-4f7b-9d12-ef324f4e4ec2}">
+      <IDSymbol name="bmpPic1" value="1" />
+      <IDSymbol name="bmpPic2" value="2" />
+      <IDSymbol name="bmpPicSearch" value="3" />
+      <IDSymbol name="bmpPicX" value="4" />
+      <IDSymbol name="bmpPicArrows" value="5" />
+      <IDSymbol name="bmpPicStrikethrough" value="6" />
+    </GuidSymbol>
+  
+    <GuidSymbol value="{92e3e96c-1f2a-49ed-99f4-a3a0987a2993}" name="guidBreezeTypeDefsPackageCmdSet1">
+      <IDSymbol value="4128" name="MyMenuGroup" />
+      <IDSymbol value="256" name="cmdidAddCommand" />
+    </GuidSymbol>
+  
+    <GuidSymbol value="{95cae157-c41a-4da2-82f9-e1c26b16e753}" name="guidImages1">
+      <IDSymbol name="bmpPic1" value="1" />
+      <IDSymbol name="bmpPic2" value="2" />
+      <IDSymbol name="bmpPicSearch" value="3" />
+      <IDSymbol name="bmpPicX" value="4" />
+      <IDSymbol name="bmpPicArrows" value="5" />
+      <IDSymbol name="bmpPicStrikethrough" value="6" />
+    </GuidSymbol>
+  
+    <GuidSymbol value="{56d15f6a-5a8f-4a9e-8352-a86a3b2c6237}" name="guidBreezeTypeDefsPackageCmdSet2">
+      <IDSymbol value="4128" name="MyMenuGroup" />
+      <IDSymbol value="256" name="cmdidAddToFolderCommand" />
+    </GuidSymbol>
+  
+    <GuidSymbol value="{3041cc6f-6310-415a-acec-4b5307ccb995}" name="guidImages2">
+      <IDSymbol name="bmpPic1" value="1" />
+      <IDSymbol name="bmpPic2" value="2" />
+      <IDSymbol name="bmpPicSearch" value="3" />
+      <IDSymbol name="bmpPicX" value="4" />
+      <IDSymbol name="bmpPicArrows" value="5" />
+      <IDSymbol name="bmpPicStrikethrough" value="6" />
+    </GuidSymbol>
+  
+    <GuidSymbol value="{ea0c7fda-2dab-4b33-9548-74e58440a65e}" name="guidBreezeTypeDefsPackageCmdSet3">
+      <IDSymbol value="4128" name="MyMenuGroup" />
+      <IDSymbol value="256" name="cmdidAddToReferencesCommand" />
+    </GuidSymbol>
+  
+    <GuidSymbol value="{b81bed93-59e9-4fd6-863d-d91f146c968d}" name="guidImages3">
       <IDSymbol name="bmpPic1" value="1" />
       <IDSymbol name="bmpPic2" value="2" />
       <IDSymbol name="bmpPicSearch" value="3" />

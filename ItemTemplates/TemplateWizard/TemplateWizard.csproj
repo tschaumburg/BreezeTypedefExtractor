@@ -62,6 +62,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="key.snk" />
+    <EmbeddedResource Include="template.breezeinfo">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <Page Include="BreezeinfoWizardWindow.xaml">

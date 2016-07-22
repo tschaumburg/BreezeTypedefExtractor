@@ -5,10 +5,13 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:TemplateWizard"
         mc:Ignorable="d"
-        Title="Add Breeze reference..." Height="250" Width="500">
+        Title="Add Breeze reference..." Height="350" Width="500">
+    <Window.Resources>
+        <BitmapImage x:Key="MyImageSource" UriSource="images/breezets-large.png" />
+    </Window.Resources>
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="10"/>
+            <RowDefinition Height="100"/>
             <RowDefinition Height="auto"/>
             <RowDefinition Height="10"/>
             <RowDefinition Height="auto"/>
@@ -25,6 +28,21 @@
             <ColumnDefinition Width="auto"/>
         </Grid.ColumnDefinitions>
 
+        <Image Source="{StaticResource MyImageSource}" />
+        <TextBlock 
+            Grid.Column="1" 
+            Grid.ColumnSpan="2"
+            TextWrapping="Wrap"
+            Margin="15,10" 
+            FontStyle="Italic" 
+            FontSize="14" 
+            Foreground="DarkGray" 
+            TextAlignment="Left"
+        >
+            <Run>A Breeze data service reference gives you a strongly typed Typescript
+            interface to your dataservice.</Run>
+        </TextBlock>
+        
         <TextBlock Grid.Row="1" Grid.Column="0" Margin="15,5">Reference name:</TextBlock>
         <TextBox x:Name="NameBox" TextChanged="UpdateUI" Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2" Margin="15,0" HorizontalAlignment="Stretch"></TextBox>
 
@@ -50,6 +68,6 @@
         <TextBlock Grid.Row="7" Grid.Column="0" Margin="15,5">Proxy name:</TextBlock>
         <TextBox x:Name="ProxyNameBox" TextChanged="UpdateUI" Grid.Row="7" Grid.Column="1" Grid.ColumnSpan="2" Margin="15,0" HorizontalAlignment="Stretch"></TextBox>
 
-        <Button x:Name="OKButton" Grid.Row="9" Grid.Column="1" Margin="15" Padding="10,5" HorizontalAlignment="Right" Click="Button_Click">OK</Button>
+        <Button x:Name="OKButton" Grid.Row="9" Grid.Column="2" Margin="15" Padding="10,5" HorizontalAlignment="Right" Click="Button_Click">OK</Button>
     </Grid>
 </Window>

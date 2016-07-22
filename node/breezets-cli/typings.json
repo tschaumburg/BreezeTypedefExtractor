@@ -1,0 +1,5 @@
+{
+  "globalDependencies": {
+    "commander": "registry:dt/commander#2.3.0+20160317120654"
+  }
+}

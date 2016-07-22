@@ -1,0 +1,10 @@
+{
+    "name": "breezets",
+    "dependencies": {},
+    "globalDependencies": {
+        "breeze": "registry:dt/breeze#1.5.0+20160629200629",
+        "jquery": "registry:dt/jquery#1.10.0+20160620094458",
+        "node": "registry:dt/node#6.0.0+20160709114037",
+        "q": "registry:dt/q#0.0.0+20160613154756"
+    }
+}

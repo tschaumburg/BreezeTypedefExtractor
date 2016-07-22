@@ -10,15 +10,13 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BreezeTypeDefs", "BreezeTyp
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BreezeGenerators", "BreezeGenerators\BreezeGenerators.csproj", "{79878989-DEA8-468E-AFDE-0A12901F5FB5}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ItemTemplates", "ItemTemplates", "{2943F4CF-D531-4FFA-B11C-A83C2812EB6B}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TypescriptTemplate", "ItemTemplates\TypescriptTemplate\TypescriptTemplate.csproj", "{0D7F1E59-EC37-406C-B1B7-7D09D6DC66F5}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JavascriptTemplate", "ItemTemplates\JavascriptTemplate\JavascriptTemplate.csproj", "{BDDAFDAB-A330-4704-9815-740BF2FD43D7}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NodeTemplate", "ItemTemplates\NodeTemplate\NodeTemplate.csproj", "{A666FE8C-7A95-4AA7-A77B-AD0F3FBB393B}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TemplateWizard", "ItemTemplates\TemplateWizard\TemplateWizard.csproj", "{A958832F-434B-4748-A3BD-99F652951457}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "node", "node", "{EAB0FDA2-53A9-41FF-95B2-F03D5265E466}"
+EndProject
+Project("{9092AA53-FB77-4645-B42D-1CCCA6BD08BD}") = "breezets", "node\breezets\breezets.njsproj", "{0B01231C-D132-4B34-804E-564CD52B9C9E}"
+EndProject
+Project("{9092AA53-FB77-4645-B42D-1CCCA6BD08BD}") = "breezets-cli", "node\breezets-cli\breezets-cli.njsproj", "{AC169E69-BAB5-40DA-B5D5-5417B9AE4B5D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -34,29 +32,24 @@ Global
 		{79878989-DEA8-468E-AFDE-0A12901F5FB5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{79878989-DEA8-468E-AFDE-0A12901F5FB5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{79878989-DEA8-468E-AFDE-0A12901F5FB5}.Release|Any CPU.Build.0 = Release|Any CPU
-		{0D7F1E59-EC37-406C-B1B7-7D09D6DC66F5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{0D7F1E59-EC37-406C-B1B7-7D09D6DC66F5}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{0D7F1E59-EC37-406C-B1B7-7D09D6DC66F5}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{0D7F1E59-EC37-406C-B1B7-7D09D6DC66F5}.Release|Any CPU.Build.0 = Release|Any CPU
-		{BDDAFDAB-A330-4704-9815-740BF2FD43D7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{BDDAFDAB-A330-4704-9815-740BF2FD43D7}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{BDDAFDAB-A330-4704-9815-740BF2FD43D7}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{BDDAFDAB-A330-4704-9815-740BF2FD43D7}.Release|Any CPU.Build.0 = Release|Any CPU
-		{A666FE8C-7A95-4AA7-A77B-AD0F3FBB393B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{A666FE8C-7A95-4AA7-A77B-AD0F3FBB393B}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{A666FE8C-7A95-4AA7-A77B-AD0F3FBB393B}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{A666FE8C-7A95-4AA7-A77B-AD0F3FBB393B}.Release|Any CPU.Build.0 = Release|Any CPU
 		{A958832F-434B-4748-A3BD-99F652951457}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{A958832F-434B-4748-A3BD-99F652951457}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A958832F-434B-4748-A3BD-99F652951457}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A958832F-434B-4748-A3BD-99F652951457}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0B01231C-D132-4B34-804E-564CD52B9C9E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0B01231C-D132-4B34-804E-564CD52B9C9E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0B01231C-D132-4B34-804E-564CD52B9C9E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0B01231C-D132-4B34-804E-564CD52B9C9E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AC169E69-BAB5-40DA-B5D5-5417B9AE4B5D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AC169E69-BAB5-40DA-B5D5-5417B9AE4B5D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AC169E69-BAB5-40DA-B5D5-5417B9AE4B5D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AC169E69-BAB5-40DA-B5D5-5417B9AE4B5D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
-		{0D7F1E59-EC37-406C-B1B7-7D09D6DC66F5} = {2943F4CF-D531-4FFA-B11C-A83C2812EB6B}
-		{BDDAFDAB-A330-4704-9815-740BF2FD43D7} = {2943F4CF-D531-4FFA-B11C-A83C2812EB6B}
-		{A666FE8C-7A95-4AA7-A77B-AD0F3FBB393B} = {2943F4CF-D531-4FFA-B11C-A83C2812EB6B}
+		{0B01231C-D132-4B34-804E-564CD52B9C9E} = {EAB0FDA2-53A9-41FF-95B2-F03D5265E466}
+		{AC169E69-BAB5-40DA-B5D5-5417B9AE4B5D} = {EAB0FDA2-53A9-41FF-95B2-F03D5265E466}
 	EndGlobalSection
 EndGlobal

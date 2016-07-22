@@ -14,26 +14,28 @@ namespace BreezeGenerators
     {
         public static async Task<List<string>> StartGeneration(string language, Dictionary<string, string> attributes, string sourceFilename, string metadataString, string serviceUrl)
         {
-            // Find the generator script file:
+            // Find the generator script file...:
             var scriptPath = FindScript(Path.GetDirectoryName(sourceFilename), language);
             scriptPath = scriptPath.Replace('\\', '/');
-            var func = Edge.Func(@"return require('" + scriptPath + "')");
 
-            // Prepare the parameters:
+            // ...prepare the parameterlist...:
             var jsonParameters = new JObject();
-            jsonParameters.Add("sourceFile", sourceFilename);
+            jsonParameters.Add("sourceFile", sourceFilename); // old
+            jsonParameters.Add("serviceName", Path.GetFileNameWithoutExtension(sourceFilename)); // new
             jsonParameters.Add("metadata", metadataString);
-            jsonParameters.Add("url", serviceUrl);
-            // add additional attributes:
+            jsonParameters.Add("serviceUrl", serviceUrl);
+
+            // ...including additional attributes...:
             var jsonAttributes = new JObject();
             foreach (var kvp in attributes)
                 jsonAttributes.Add(kvp.Key, kvp.Value);
             jsonParameters.Add("attributes", jsonAttributes);
 
-            // Call the generator script:
+            // ...feed the script to Edge...:
+            var func = Edge.Func(@"return require('" + scriptPath + "')");
             var retVal = await func(jsonParameters.ToString()) as object[];
 
-            // Write the files:
+            // Get the list of filename+filecontents returned:
             List<string> filelist = new List<string>();
             if (retVal == null)
                 return filelist;
@@ -81,8 +83,7 @@ namespace BreezeGenerators
 
         private static string FindScript(string breezeinfoDir, string language)
         {
-            language = language.Substring(0, 1).ToUpper() + language.Substring(1); // typescript => Typescript
-            var scriptFile = "Generate" + language + ".js";
+            var scriptFile = "generate" + language.ToLower() + ".js";
 
             // Look for customized generator next to the .breezeinfo file
             var customizedScriptPath = Path.Combine(breezeinfoDir, scriptFile);

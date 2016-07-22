@@ -11,6 +11,10 @@
         "name": "Thomas Schaumburg",
         "email": "thomas@schaumburg-it.dk"
     },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/tschaumburg/BreezeTypedefExtractor.git"
+    },
     "readme": "See breezets-cli",
     "dependencies": {
         "breeze-client": "^1.5.10"

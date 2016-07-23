@@ -15,7 +15,7 @@
         "breezets": "./app.js"
     },
     "dependencies": {
-        "breezets": "^0.1.0",
+        "breezets": "^0.1.1",
         "commander": "^2.9.0",
         "sync-request": "^3.0.1",
         "url": "^0.11.0"

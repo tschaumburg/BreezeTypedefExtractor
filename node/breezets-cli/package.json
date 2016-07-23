@@ -1,5 +1,5 @@
 {
-    "name": "breeze-ref-client",
+    "name": "breezets-cli",
     "version": "0.1.0",
     "description": "Command generating a strongly type client-side Typescript API for a Breeze data service",
     "main": "app.js",

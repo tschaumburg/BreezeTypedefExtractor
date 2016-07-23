@@ -1,19 +1,5 @@
-//import * as breezeref from "./typescript";
-//export function generate(
-//    serviceName: string,
-//    metadata: string,
-//    serviceUrl: string,
-//    namespace: string,
-//    proxyname: string,
-//    generateTypedQueries: boolean,
-//    extensions: boolean,
-//    attributes: {}
-//): [{ filename: string, contents: string }]
-//{
-//    return breezeref.generateTypescript(serviceName, metadata, serviceUrl, namespace, proxyname, generateTypedQueries, extensions, attributes);
-//}
-"use strict";
 ///<reference path='../typings/index.d.ts' />
+"use strict";
 function generateTypescript(refname, metadata, url, namespace, proxyname, generateTypedQueries, extensions, attributes) {
     return breezeref._generateTypescript(refname, metadata, url, namespace, proxyname, generateTypedQueries, extensions, attributes);
 }
@@ -30,6 +16,8 @@ var breezeref;
     function _generateTypescript(refname, metadata, url, _namespace, proxyname, generateTypedQueries, extensions, attributes) {
         var framework = "none";
         var extension = ".d.ts";
+        if (!refname)
+            refname = "myservice";
         if (attributes) {
             if (attributes["framework"])
                 framework = attributes["framework"];
@@ -351,9 +339,10 @@ var breezeref;
             var propertyinfoName = 'extensions.MultiAssociationFieldInfo<' + thisMeta + ', ' + thisEntity + ', ' + otherMeta + ', ' + otherEntity + '>';
             if (property.isScalar)
                 propertyinfoName = 'extensions.SingleAssociationFieldInfo<' + thisMeta + ', ' + thisEntity + ', ' + otherMeta + ', ' + otherEntity + '>';
-            var metadataDef = '      public ' + property.name + ': ';
-            metadataDef += propertyinfoName + ' = new ' + propertyinfoName + '(' + thisMeta + '._instance, "' + property.name + '");' + crlf;
-            return metadataDef;
+            var ctor = 'new ' + propertyinfoName + '(' + thisMeta + '._Instance, "' + property.name + '", ' + otherMeta + '._Instance' + ')';
+            if (property.isScalar)
+                ctor = 'new ' + propertyinfoName + '(' + thisMeta + '._Instance, "' + property.name + '")';
+            return '      public ' + property.name + ': ' + propertyinfoName + ' = ' + ctor + ';' + crlf;
         }
         var crlf = String.fromCharCode(13);
         var prefix = "";

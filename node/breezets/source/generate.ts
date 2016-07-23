@@ -1,19 +1,4 @@
-﻿//import * as breezeref from "./typescript";
-//export function generate(
-//    serviceName: string,
-//    metadata: string,
-//    serviceUrl: string,
-//    namespace: string,
-//    proxyname: string,
-//    generateTypedQueries: boolean,
-//    extensions: boolean,
-//    attributes: {}
-//): [{ filename: string, contents: string }]
-//{
-//    return breezeref.generateTypescript(serviceName, metadata, serviceUrl, namespace, proxyname, generateTypedQueries, extensions, attributes);
-//}
-
-///<reference path='../typings/index.d.ts' />
+﻿///<reference path='../typings/index.d.ts' />
 
 export function generateTypescript(
     refname: string,
@@ -475,11 +460,11 @@ namespace breezeref
             if (property.isScalar)
                 propertyinfoName = 'extensions.SingleAssociationFieldInfo<' + thisMeta + ', ' + thisEntity + ', ' + otherMeta + ', ' + otherEntity + '>';
 
-            var metadataDef = '      public ' + property.name + ': ';
+            var ctor = 'new ' + propertyinfoName + '(' + thisMeta + '._Instance, "' + property.name + '", ' + otherMeta + '._Instance' + ')';
+            if (property.isScalar)
+                ctor = 'new ' + propertyinfoName + '(' + thisMeta + '._Instance, "' + property.name + '")';
 
-            metadataDef += propertyinfoName + ' = new ' + propertyinfoName + '(' + thisMeta + '._instance, "' + property.name + '");' + crlf;
-
-            return metadataDef;
+            return '      public ' + property.name + ': ' + propertyinfoName + ' = ' + ctor + ';' + crlf;
         }
 
         var crlf = String.fromCharCode(13);

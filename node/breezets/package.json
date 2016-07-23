@@ -1,6 +1,6 @@
 {
     "name": "breezets",
-    "version": "0.1.0",
+    "version": "0.1.1",
     "description": "Library generating a strongly type client-side Typescript API for a Breeze data service",
     "main": "dist/generate.js",
     "files": [

@@ -1,4 +1,7 @@
 ﻿# breezets-cli
+Using Breeze.js from Typescript is only partly typed - breezets supplies the missing parts.
+
+Read more in the "Why?" section.
 
 ## Installation
 To install, run
@@ -40,8 +43,28 @@ The command accepts the following parameters:
 		  -u, --url <url>                  The default service URL used by the client-side proxy (only used with --proxyname)
 		  -t, --no-typedqueries            Do not generate strongly typed queries on the client-side proxy (only used with --proxyname)
 
+## Why?
+Breeze.js is a Javascript library, made up partly of predefined objects (like breeze.EntityManager), partly of dynamically constructed objects 
+generated on-the-fly from data and metadata available from your server.
+
+Examples of the predefined category are breeze.EntityManager and breeze.Predicate. Typescript type definitions for these are available from e.g. DefinitelyTyped.
+
+Examples of the dynamic category could be Customer, Order and Delivery. No type definitions are available for these, so all the data you retrieve from the server
+appear as typeless Javascript objects (anys), denying you the benefits of Typescript.
+
+### Get entity type definitions
+The usual cure is to write these missing type definitions your self. This is tedious work, duplicating class 
+definitions already written once (eg. in C#) on the server.
+
+Breezets does this work for you. See the "Generated code" section for examples.
+
 ## Generated code
-Breezets code generation can run in two modes: basic typedef (without the --proxyname parameter) and full strongly typed query mode (with the --proxyname parameter).
+Breezets code generation can essentially run in one of two modes, depending on the --proxyname parameter: 
+basic typedefinition mode and LINQ-style query mode.
+
+Without the --proxyname option, breezets generates the missing type definitions mentioned in the "Why?" section.
+
+With the --proxyname option, breezets also generates a strongly typed client-side proxy
 
 ###Basic type definitions
 Without the --proxyname option, breezets will only generate a Typescript type definition file (myservice.d.ts)
@@ -145,8 +168,8 @@ And if you misspell
 
 the Typescript compiler will catch it (and you IDE will probably indicate it to you before that).
 
-img
-
+![typo screenshot](./docimages/typo.png?raw=true "Misspelling example")
+        
 And your IDE can give you intellisense support:
 
-img
+![intellisense screenshot](./docimages/intellisense.png?raw=true "Intellisense example")

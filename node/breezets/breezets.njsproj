@@ -46,7 +46,6 @@
     <Compile Include="dist\js\q.min.js" />
     <Compile Include="dist\js\queue.js" />
     <Compile Include="dist\typescript.js" />
-    <Compile Include="source\typescript.ts" />
     <Content Include="lib\tsconfig.json" />
     <Content Include="package.json" />
     <Content Include="README.md" />

@@ -1,58 +1,87 @@
-///<reference path='../typings/index.d.ts' />
 "use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+//require('./js/jquery-2.1.0.js');
+//var breeze = require('breeze-client');
+var fs = require('fs');
+var http = require('http');
+var breeze = require("breeze-client");
 function generateTypescript(refname, metadata, url, namespace, proxyname, generateTypedQueries, extensions, attributes) {
     return breezeref._generateTypescript(refname, metadata, url, namespace, proxyname, generateTypedQueries, extensions, attributes);
 }
 exports.generateTypescript = generateTypescript;
+function getMetadata(url, cached) {
+    if (!url)
+        return cached;
+    try {
+        return breezeref.getMetadata1(url);
+    }
+    catch (err) {
+        // warn that we are falling back to the cache
+        return cached;
+    }
+}
+exports.getMetadata = getMetadata;
 var breezeref;
 (function (breezeref) {
-    //require('./js/jquery-2.1.0.js');
-    var breeze = require('breeze-client');
+    function getMetadata1(urlstr) {
+        var url = require("url");
+        var u = url.parse(urlstr);
+        if (u.protocol == null || u.protocol.toLowerCase() === 'file' || u.protocol.toLowerCase() === 'file:') {
+            var filename = u.pathname;
+            return fs.readFileSync(filename, 'utf8');
+        }
+        else {
+            var request = require('sync-request');
+            var res = request('GET', urlstr);
+            var metadata = res.getBody('utf8');
+            return metadata;
+        }
+    }
+    breezeref.getMetadata1 = getMetadata1;
     function requiretext(filename) {
         var fs = require("fs");
         var filename = require.resolve(filename);
         return fs.readFileSync(filename, 'utf8');
     }
     function _generateTypescript(refname, metadata, url, _namespace, proxyname, generateTypedQueries, extensions, attributes) {
+        var crlf = String.fromCharCode(13);
+        var result = [];
         var framework = "none";
-        var extension = ".d.ts";
+        //var extension = ".d.ts";
         if (!refname)
             refname = "myservice";
         if (attributes) {
             if (attributes["framework"])
                 framework = attributes["framework"];
-            if (attributes["extension"])
-                extension = attributes["extension"];
+            //if (attributes["extension"])
+            //    extension = attributes["extension"];
         }
-        // Calculate the target file name (<source.xxx => <source>.d.ts)
-        //var targetFile = sourceFile;
-        //var lastDotAt = targetFile.lastIndexOf( "." );
-        //if ( lastDotAt >= 0 )
-        //    targetFile = targetFile.substr(0, lastDotAt) + extension;
-        var targetFile = refname + extension;
         // Load the metadata:
         var metadataStore = new breeze.MetadataStore();
         metadataStore.importMetadata(metadata);
         AnnotateMetadata(metadataStore, _namespace, framework, generateTypedQueries);
+        var index = "";
         // Generate the type definitions:
+        var typedefsFile = "typedefs.ts";
         var typedefs = GenerateTypedefs(metadataStore, _namespace, framework, generateTypedQueries);
-        // Build the result:
-        var result = [];
-        result.push({ filename: targetFile, contents: typedefs });
+        result.push({ filename: typedefsFile, contents: typedefs });
+        index += 'export * from "./typedefs";' + crlf;
         if (proxyname) {
-            //var proxyfile = sourceFile;
-            //var lastSlashAt = proxyfile.lastIndexOf( "\\" );
-            //if ( lastSlashAt >= 0 )
-            //    proxyfile = proxyfile.substr( 0, lastSlashAt ) + '\\' + proxyname + '.ts';
-            var proxyfile = refname + ".ts";
+            var proxyfile = (refname + ".ts").toLowerCase();
             var proxydef = GenerateProxy(proxyname, JSON.parse(metadata), metadataStore, _namespace, framework, generateTypedQueries, url);
-            if (generateTypedQueries) {
-                proxydef += GenerateMetadata(metadataStore, _namespace);
-            }
             result.push({ filename: proxyfile, contents: proxydef });
+            index += 'export * from "./' + refname.toLowerCase() + '";' + crlf;
+            if (generateTypedQueries) {
+                var querybuilderFile = "querybuilder.ts";
+                var querybuilder = GenerateMetadata(metadataStore, _namespace);
+                result.push({ filename: querybuilderFile, contents: querybuilder });
+                index += 'export * from "./querybuilder";' + crlf;
+            }
         }
-        if (proxyname && generateTypedQueries && extensions)
-            result.push({ filename: "breezeextensions.ts", contents: requiretext("../lib/breezeextensions.ts") });
+        //if (proxyname && generateTypedQueries && extensions)
+        //    result.push({ filename: "breezeextensions.js", contents: requiretext("./breezeextensions.js") });
+        //index += 'var breezets = require("breezets");' + crlf;
+        result.push({ filename: "index.ts", contents: index });
         return result;
     }
     breezeref._generateTypescript = _generateTypescript;
@@ -109,6 +138,9 @@ var breezeref;
         var prefix = "";
         var typedefs = "";
         var suffix = "";
+        prefix += 'import breeze = require("breeze-client");';
+        prefix += crlf;
+        prefix += crlf;
         if (declareModule) {
             prefix += 'declare module ' + declareModule + '.typedefs' + crlf;
             prefix += '{' + crlf;
@@ -210,27 +242,26 @@ var breezeref;
         var typedefs = "";
         var suffix = "";
         if (generateTypedQueries) {
-            prefix += '/// <reference path="breezeextensions.ts" />' + crlf;
+            prefix += '   import * as breeze from "breeze-client";' + crlf;
+            prefix += '   import * as extensions from "breezets";' + crlf;
+            prefix += '   import * as typedefs from "./typedefs";' + crlf;
+            prefix += '   import * as querybuilder from "./querybuilder";' + crlf;
         }
         if (namespace) {
             prefix += 'namespace ' + namespace + crlf;
             prefix += '{' + crlf;
             suffix += '}' + crlf;
         }
-        if (generateTypedQueries) {
-            prefix += '   import extensions = dk.schaumburgit.breezeextensions;' + crlf;
-            prefix += '   import typedefs = ' + namespace + '.typedefs;' + crlf;
-            prefix += '   import querybuilder = ' + namespace + '.querybuilder;' + crlf;
-        }
         prefix += '   export class ' + proxyname + crlf;
         prefix += '   {' + crlf;
         suffix = '   }' + crlf + suffix;
         typedefs += generateConstructor(proxyname);
+        typedefs += generateSave();
         var entities = metadatajson.schema.entityContainer.entitySet;
         for (var i = 0; i < entities.length; i++) {
             // type declaration
             var entity = entities[i];
-            typedefs += generateEntityMethod(entity, format, generateTypedQueries);
+            typedefs += generateEntityMethod(namespace, entity, format, generateTypedQueries);
         }
         return prefix + typedefs + suffix;
         function generateConstructor(proxyname) {
@@ -260,16 +291,37 @@ var breezeref;
             ctor += '      }' + crlf;
             return ctor;
         }
-        function generateEntityMethod(entity, format, generateTypedQueries) {
+        function generateSave() {
+            var save = "";
+            save += '      public hasChanges(): boolean' + crlf;
+            save += '      {' + crlf;
+            save += '          return this._entityManager.hasChanges();' + crlf;
+            save += '      }' + crlf;
+            save += crlf;
+            save += '      public saveChanges(): Promise<breeze.SaveResult>' + crlf;
+            save += '      {' + crlf;
+            save += '          var promise = this._entityManager.saveChanges();' + crlf;
+            save += '          return promise;' + crlf;
+            save += '      }' + crlf;
+            save += crlf;
+            return save;
+        }
+        function generateEntityMethod(namespace, entity, format, generateTypedQueries) {
             var entityName = entity.name;
             var propName = entity.name;
             var propType = tsTypeName(entity.entityType);
-            var metaType = tsMetaTypeName(entity.entityType);
+            var metaType = tsMetaTypeName(namespace, entity.entityType);
             var methoddef = "";
             if (generateTypedQueries) {
-                methoddef += '      public get ' + propName + '(): extensions.TEntityQuery<' + metaType + ', ' + propType + '>' + crlf;
+                methoddef += '      public get ' + propName + '(): extensions.TEntitySet<' + metaType + ', ' + propType + '>' + crlf;
                 methoddef += '      {' + crlf;
-                methoddef += '          return new extensions.TEntityQuery<' + metaType + ', ' + propType + '>(this._entityManager, "' + entityName + '", ' + metaType + '._Instance, null, null);' + crlf;
+                methoddef += '          return new extensions.TEntitySet<' + metaType + ', ' + propType + '>(' + crlf;
+                methoddef += '              this._entityManager, ' + crlf;
+                methoddef += '              "' + propType + '", ' + crlf;
+                methoddef += '              "' + propName + '", ' + crlf;
+                methoddef += '              ' + metaType + '._Instance,' + crlf;
+                methoddef += '               null,' + crlf;
+                methoddef += '               null);' + crlf;
                 methoddef += '      }' + crlf;
             }
             else {
@@ -283,8 +335,10 @@ var breezeref;
         function tsTypeName(breezeTypeName) {
             return 'typedefs.' + breezeTypeName.replace('Self.', '');
         }
-        function tsMetaTypeName(breezeTypeName) {
-            return 'querybuilder.' + breezeTypeName.replace('Self.', '') + 'Query';
+        function tsMetaTypeName(namespace, breezeTypeName) {
+            if (!namespace)
+                return 'querybuilder.' + breezeTypeName.replace('Self.', '') + 'Query';
+            return namespace + '.querybuilder.' + breezeTypeName.replace('Self.', '') + 'Query';
         }
     }
     function GenerateMetadata(metadataStore, namespace) {
@@ -351,10 +405,11 @@ var breezeref;
         if (namespace) {
             prefix += 'namespace ' + namespace + '.querybuilder' + crlf;
             prefix += '{' + crlf;
-            prefix += '   import extensions = dk.schaumburgit.breezeextensions;' + crlf;
-            prefix += '   import typedefs = ' + namespace + '.typedefs;' + crlf;
             suffix += crlf + '}';
         }
+        prefix += '   import extensions = require("breezets");' + crlf;
+        prefix += '   import typedefs = require("./typedefs");' + crlf;
+        prefix += crlf;
         var types = metadataStore.getEntityTypes();
         for (var i = 0; i < types.length; i++) {
             // type declaration
@@ -363,5 +418,9 @@ var breezeref;
         }
         return prefix + typedefs + suffix;
     }
+    //return function (data, callback) {
+    //    var result = 'Node.js welcomes ' + data;
+    //    callback(null, result);
+    //}
 })(breezeref || (breezeref = {}));
 //# sourceMappingURL=generate.js.map

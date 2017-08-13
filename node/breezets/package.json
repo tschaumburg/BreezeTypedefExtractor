@@ -1,12 +1,12 @@
 {
     "name": "breezets",
-    "version": "0.1.1",
+    "version": "0.1.9",
     "description": "Library generating a strongly type client-side Typescript API for a Breeze data service",
-    "main": "dist/generate.js",
+    "main": "dist/index.js",
     "files": [
-        "dist/typescript.js",
-        "lib/breezeextensions.ts"
+        "dist/"
     ],
+    "types": "dist/index",
     "author": {
         "name": "Thomas Schaumburg",
         "email": "thomas@schaumburg-it.dk"
@@ -17,6 +17,11 @@
     },
     "readme": "See breezets-cli",
     "dependencies": {
-        "breeze-client": "^1.5.10"
+        "breeze-client": "^1.6.3",
+        "sync-request": "^4.1.0",
+        "url": "^0.11.0"
+    },
+    "devDependencies": {
+        "@types/node": "^8.0.20"
     }
 }

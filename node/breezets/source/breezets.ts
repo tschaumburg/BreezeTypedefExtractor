@@ -1,16 +1,29 @@
-﻿///<reference path='../typings/index.d.ts' />
-module dk.schaumburgit.breezeextensions
-{
+﻿import * as breeze from "breeze-client";
+
+    export class ExecuteQueryError// implements Error
+    {
+        //public name: string = 'ExecuteQueryError';
+        public constructor(
+            public query: breeze.EntityQuery,
+            public httpResponse: breeze.HttpResponse,
+            public entityManager: breeze.EntityManager,
+            public message: string,
+            public stack: string
+        )
+        { }
+    }
     export class TEntityQuery<TEntityQueryBuilder, TEntity>
     {
-        private _entitymanager: breeze.EntityManager = null;
+        protected _entitymanager: breeze.EntityManager = null;
+        protected typename: string = null;
         private rootname: string = null;
         private rootinfo: TEntityQueryBuilder = null;
         private predicate: TPredicate<TEntityQueryBuilder, TEntity> = null;
         private _orderBy: PrimitiveFieldInfo = null;
-        constructor(_entityManager: breeze.EntityManager, rootname: string, rootinfo: TEntityQueryBuilder, predicate: TPredicate<TEntityQueryBuilder, TEntity>, orderBy: PrimitiveFieldInfo)
+        constructor(_entityManager: breeze.EntityManager, typename: string, rootname: string, rootinfo: TEntityQueryBuilder, predicate: TPredicate<TEntityQueryBuilder, TEntity>, orderBy: PrimitiveFieldInfo)
         {
             //super();
+            this.typename = typename;
             this.rootname = rootname;
             this.rootinfo = rootinfo;
             this.predicate = predicate;
@@ -18,7 +31,10 @@ module dk.schaumburgit.breezeextensions
             this._entitymanager = _entityManager;
         }
 
-        public execute(): breeze.promises.IPromise<TEntity[]>
+        /**
+         * @returns z 
+         */
+        public execute(): Promise<TEntity[]>
         {
             var breezeQuery = breeze.EntityQuery.from(this.rootname);
             if (this.predicate != null)
@@ -26,14 +42,25 @@ module dk.schaumburgit.breezeextensions
             if (this._orderBy != null)
                 breezeQuery = breezeQuery.orderBy(this._orderBy.getFieldName());
 
-            return this._entitymanager.executeQuery(breezeQuery).then(dt => <TEntity[]><any>dt.results);
+            var res =
+                this._entitymanager
+                    .executeQuery(breezeQuery)
+                    .then(dt => <TEntity[]><any>dt.results);
+            
+            res.catch(
+                (reason) =>
+                {
+                    var tst = reason;
+                });
+
+            return res;
         }
 
         public orderBy(fieldSelector: (query: TEntityQueryBuilder) => PrimitiveFieldInfo): TEntityQuery<TEntityQueryBuilder, TEntity>
         {
             var field = fieldSelector(this.rootinfo);
 
-            return new TEntityQuery<TEntityQueryBuilder, TEntity>(this._entitymanager, this.rootname, this.rootinfo, this.predicate, field);
+            return new TEntityQuery<TEntityQueryBuilder, TEntity>(this._entitymanager, this.typename, this.rootname, this.rootinfo, this.predicate, field);
         }
 
         /**
@@ -70,7 +97,7 @@ module dk.schaumburgit.breezeextensions
             if (this.predicate != null)
                 newPredicate = this.predicate.and(predicate);
 
-            return new TEntityQuery<TEntityQueryBuilder, TEntity>(this._entitymanager, this.rootname, this.rootinfo, predicate, this._orderBy);
+            return new TEntityQuery<TEntityQueryBuilder, TEntity>(this._entitymanager, this.typename, this.rootname, this.rootinfo, predicate, this._orderBy);
         }
 
         private where_function(queryExpression: (query: TEntityQueryBuilder) => TPredicate<TEntityQueryBuilder, TEntity>): TEntityQuery<TEntityQueryBuilder, TEntity>
@@ -157,7 +184,7 @@ module dk.schaumburgit.breezeextensions
 
         public getBreezePredicate(): breeze.Predicate
         {
-            return new breeze.Predicate(this.fieldname, this.comparison, this.and);
+            return new breeze.Predicate(this.fieldname, this.comparison, this.value);
         }
     }
 
@@ -374,4 +401,14 @@ module dk.schaumburgit.breezeextensions
             return new TRelatedPredicate<TEntityQueryBuilder, TEntity, TOtherEntityQueryBuilder, TOtherEntity>(this.builder, this.membername, breeze.FilterQueryOp.Any, subPredicate);
         }
     }
-}
+
+    export class TEntitySet<TEntityQueryBuilder, TEntity> extends TEntityQuery<TEntityQueryBuilder, TEntity>
+    {
+        public create(initializer: (initialValues: TEntity) => void): TEntity
+        {
+            var initialValues = {} as TEntity;
+            initializer(initialValues);
+
+            return this._entitymanager.createEntity(this.typename, initialValues) as any as TEntity;
+        }
+    }

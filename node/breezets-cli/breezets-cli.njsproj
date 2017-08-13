@@ -8,6 +8,8 @@
     <EnableTypeScript>true</EnableTypeScript>
     <TypeScriptSourceMap>true</TypeScriptSourceMap>
     <TypeScriptModuleKind>CommonJS</TypeScriptModuleKind>
+    <ScriptArguments>..\plans.metadata --servicename PlansManager --proxyname PlansManager</ScriptArguments>
+    <NodeExeArguments>--inspect</NodeExeArguments>
   </PropertyGroup>
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
@@ -16,16 +18,16 @@
     <ProjectGuid>ac169e69-bab5-40da-b5d5-5417b9ae4b5d</ProjectGuid>
     <ProjectHome>
     </ProjectHome>
-    <StartupFile>app.js</StartupFile>
+    <StartupFile>.\dist\app.js</StartupFile>
     <StartWebBrowser>False</StartWebBrowser>
     <SearchPath>
     </SearchPath>
-    <WorkingDirectory>.</WorkingDirectory>
+    <WorkingDirectory>C:\Users\Thomas\Source\Repos\BreezeTypedefExtractor\node\breezets-cli\test\plans\actual</WorkingDirectory>
     <OutputPath>.</OutputPath>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <ProjectTypeGuids>{3AF33F2E-1136-4D97-BBB7-1795711AC8B8};{9092AA53-FB77-4645-B42D-1CCCA6BD08BD}</ProjectTypeGuids>
-    <ProjectView>ShowAllFiles</ProjectView>
-    <StartWebBrowser>false</StartWebBrowser>
+    <ProjectView>ProjectFiles</ProjectView>
+    <StartWebBrowser>False</StartWebBrowser>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
     <DebugSymbols>true</DebugSymbols>
@@ -34,23 +36,41 @@
     <DebugSymbols>true</DebugSymbols>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="app.js" />
     <Content Include="docimages\intellisense.png" />
     <Content Include="docimages\typo.png" />
     <Content Include="test.metadata" />
     <Content Include="package.json" />
     <Content Include="README.md" />
+    <Content Include="test\boardmanager\boardmanager.breezeinfo" />
+    <Content Include="test\boardmanager\boardmanager.metadata" />
+    <Content Include="test\plans\plans.metadata">
+      <SubType>Code</SubType>
+    </Content>
+    <Content Include="tsconfig.json">
+      <SubType>Code</SubType>
+    </Content>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="docimages\" />
-    <Folder Include="typings\" />
-    <Folder Include="typings\globals\" />
-    <Folder Include="typings\globals\node\" />
+    <Folder Include="source\" />
+    <Folder Include="test\" />
+    <Folder Include="test\boardmanager\" />
+    <Folder Include="test\boardmanager\expected\" />
+    <Folder Include="test\boardmanager\actual\" />
+    <Folder Include="test\boardmanager\latestcompiling\" />
+    <Folder Include="test\plans\" />
+    <Folder Include="test\plans\actual\" />
   </ItemGroup>
   <ItemGroup>
-    <TypeScriptCompile Include="app.ts" />
-    <TypeScriptCompile Include="typings\globals\node\index.d.ts" />
-    <TypeScriptCompile Include="typings\index.d.ts" />
+    <TypeScriptCompile Include="source\app.ts" />
+    <TypeScriptCompile Include="test\boardmanager\expected\boardmanager.ts" />
+    <TypeScriptCompile Include="test\boardmanager\expected\breezeextensions.ts" />
+    <TypeScriptCompile Include="test\boardmanager\expected\querybuilder.ts" />
+    <TypeScriptCompile Include="test\boardmanager\expected\typedefs.ts" />
+    <TypeScriptCompile Include="test\boardmanager\latestcompiling\boardmanager.ts" />
+    <TypeScriptCompile Include="test\boardmanager\latestcompiling\index.ts" />
+    <TypeScriptCompile Include="test\boardmanager\latestcompiling\querybuilder.ts" />
+    <TypeScriptCompile Include="test\boardmanager\latestcompiling\typedefs.ts" />
   </ItemGroup>
   <!-- Do not delete the following Import Project.  While this appears to do nothing it is a marker for setting TypeScript properties before our import that depends on them. -->
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\TypeScript\Microsoft.TypeScript.targets" Condition="False" />

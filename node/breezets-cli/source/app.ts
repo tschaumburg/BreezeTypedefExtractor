@@ -1,17 +1,17 @@
 ﻿#!/usr/bin/env node
-///<reference path='./typings/index.d.ts' />
 //var program: commander.ICommand = require('commander');
 var program = require('commander');
-var breezeref = require("breezets");
+import * as breezeref from "breezets";
+require("breezets");
 var fs = require('fs');
 var http = require('http');
 
-var metadataurlValue = null;
+var metadataurlValue: string = null;
 program
     .description('Generates Typescript typedefinitions for a Breeze data service')
     //.arguments('<metadataurl>', "The URL supplying the Breeze data service metadata")
     .arguments('<metadataurl>')
-    .action(function (metadataurl)
+    .action(function (metadataurl: string)
     {
         metadataurlValue = metadataurl;
     })
@@ -21,7 +21,7 @@ program
     .option('-p, --proxyname <proxyname>', '')
     .option('-t, --no-typedqueries', '')
     .option('-x, --no-extensions', 'Do not generate the breezeextensions.ts library file')
-    .action(function (file)
+    .action(function (file: any)
     {
         if (!metadataurlValue)
             program.help();
@@ -44,10 +44,18 @@ program
     })
     .parse(process.argv);
 
-function callGenerate(metadataurl, servicename, serviceurl, namespace, proxyname, typedqueries, extensions)
+function callGenerate(
+    metadataurl: string,
+    servicename: string,
+    serviceurl: string,
+    namespace: string,
+    proxyname: string,
+    typedqueries: boolean,
+    extensions: boolean
+)
 {
     var metadata = getMetadata(metadataurl);
-    var files = breezeref.generateTypescript(servicename, metadata, serviceurl, namespace, proxyname, typedqueries, extensions, [{ key: "flavor", value: "mmm...chocolate" }]);
+        var files = breezeref.generateTypescript(servicename, metadata, serviceurl, namespace, proxyname, typedqueries, extensions, [{ key: "flavor", value: "mmm...chocolate" }]);
 
     for (var n = 0; n < files.length; n++)
     {
@@ -64,7 +72,7 @@ function getMetadata(urlstr: string): string
     var url = require("url");
     var u = url.parse(urlstr);
 
-    if (u.protocol == null || u.protocol.toLowerCase() === 'file')
+    if (u.protocol == null || u.protocol.toLowerCase() === 'file' || u.protocol.toLowerCase() === 'file:')
     {
         var filename = u.pathname;
         return fs.readFileSync(filename, 'utf8');

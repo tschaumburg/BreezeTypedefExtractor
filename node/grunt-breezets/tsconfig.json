@@ -1,0 +1,22 @@
+﻿{
+    "compilerOptions": {
+        "target": "es6",
+        "module": "commonjs",
+        "moduleResolution": "node",
+        "noImplicitAny": false,
+        "removeComments": false,
+        "sourceMap": true,
+        "inlineSources": true,
+        "rootDir": "source",
+        "noEmitOnError": true,
+        "outDir": "tasks",
+        "declarationDir": "tasks",
+        "declaration": true
+    },
+    "include": [ "**/*.ts" ],
+    "exclude": [
+        "tasks",
+        "node_modules",
+        "test"
+    ]
+}

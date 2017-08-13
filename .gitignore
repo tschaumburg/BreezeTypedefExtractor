@@ -252,3 +252,16 @@ paket-files/
 .idea/
 *.sln.iml
 /BreezeGenerators/breezeextensions.js
+/node/breezets/dist
+/node/breezets/lib
+
+/node/breezets-cli/dist
+/node/breezets-cli/lib
+
+/node/grunt-breezets/dist
+/node/grunt-breezets/lib
+/node/grunt-breezets/tasks
+
+/node/breezets-cli/test/boardmanager
+/node/breezets-cli/test/plans
+/node/grunt-breezets/source/Breeze reference

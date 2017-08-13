@@ -8,9 +8,9 @@
         //"noLib": false,
         "preserveConstEnums": true,
         "suppressImplicitAnyIndexErrors": true,
-        "outDir": ".",
-        "rootDir": ".",
-        "sourceRoot": ".",
+        "outDir": "dist",
+        "rootDir": "source",
+        "sourceRoot": "source",
         "noEmitOnError": true,
         "sourceMap": true
         //"outFile": "generate.js"

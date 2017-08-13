@@ -1,8 +1,10 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.25420.1
+# Visual Studio 15
+VisualStudioVersion = 15.0.26430.14
 MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "node", "node", "{EAB0FDA2-53A9-41FF-95B2-F03D5265E466}"
+EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BreezeTypeDefs", "BreezeTypeDefs\BreezeTypeDefs.csproj", "{A8651C54-BDE6-45C7-AA6E-34935E44B6F3}"
 	ProjectSection(ProjectDependencies) = postProject
 		{A958832F-434B-4748-A3BD-99F652951457} = {A958832F-434B-4748-A3BD-99F652951457}
@@ -12,11 +14,14 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BreezeGenerators", "BreezeG
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TemplateWizard", "ItemTemplates\TemplateWizard\TemplateWizard.csproj", "{A958832F-434B-4748-A3BD-99F652951457}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "node", "node", "{EAB0FDA2-53A9-41FF-95B2-F03D5265E466}"
-EndProject
 Project("{9092AA53-FB77-4645-B42D-1CCCA6BD08BD}") = "breezets", "node\breezets\breezets.njsproj", "{0B01231C-D132-4B34-804E-564CD52B9C9E}"
 EndProject
 Project("{9092AA53-FB77-4645-B42D-1CCCA6BD08BD}") = "breezets-cli", "node\breezets-cli\breezets-cli.njsproj", "{AC169E69-BAB5-40DA-B5D5-5417B9AE4B5D}"
+	ProjectSection(ProjectDependencies) = postProject
+		{0B01231C-D132-4B34-804E-564CD52B9C9E} = {0B01231C-D132-4B34-804E-564CD52B9C9E}
+	EndProjectSection
+EndProject
+Project("{9092AA53-FB77-4645-B42D-1CCCA6BD08BD}") = "grunt-breezets", "node\grunt-breezets\grunt-breezets.njsproj", "{E44056C6-1486-490B-8AC4-AA6D31873096}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -44,6 +49,10 @@ Global
 		{AC169E69-BAB5-40DA-B5D5-5417B9AE4B5D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AC169E69-BAB5-40DA-B5D5-5417B9AE4B5D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{AC169E69-BAB5-40DA-B5D5-5417B9AE4B5D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E44056C6-1486-490B-8AC4-AA6D31873096}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E44056C6-1486-490B-8AC4-AA6D31873096}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E44056C6-1486-490B-8AC4-AA6D31873096}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E44056C6-1486-490B-8AC4-AA6D31873096}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -51,5 +60,6 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{0B01231C-D132-4B34-804E-564CD52B9C9E} = {EAB0FDA2-53A9-41FF-95B2-F03D5265E466}
 		{AC169E69-BAB5-40DA-B5D5-5417B9AE4B5D} = {EAB0FDA2-53A9-41FF-95B2-F03D5265E466}
+		{E44056C6-1486-490B-8AC4-AA6D31873096} = {EAB0FDA2-53A9-41FF-95B2-F03D5265E466}
 	EndGlobalSection
 EndGlobal

@@ -35,38 +35,25 @@
     <DebugSymbols>true</DebugSymbols>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="dist\generate.js" />
-    <Compile Include="dist\js\breeze.min.js" />
-    <Compile Include="dist\js\jquery-2.1.0.js">
-      <Publish>True</Publish>
-    </Compile>
-    <Compile Include="dist\js\jquery-2.1.0.min.js" />
-    <Compile Include="dist\js\jquery.js" />
-    <Compile Include="dist\js\q.js" />
-    <Compile Include="dist\js\q.min.js" />
-    <Compile Include="dist\js\queue.js" />
-    <Compile Include="dist\typescript.js" />
-    <Content Include="lib\tsconfig.json" />
+    <Content Include="lib\tsconfig_old.json" />
+    <Content Include="localinstall.cmd" />
     <Content Include="package.json" />
     <Content Include="README.md" />
     <Content Include="tsconfig.json" />
-    <Content Include="typings.json" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="dist\" />
     <Folder Include="lib\" />
     <Folder Include="source\" />
-    <Folder Include="typings\" />
-    <Folder Include="typings\globals\" />
-    <Folder Include="typings\globals\node\" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="lib\breezeextensions.ts">
+    <Content Include="source\breezets.ts">
       <Publish>True</Publish>
     </Content>
     <TypeScriptCompile Include="source\generate.ts" />
-    <TypeScriptCompile Include="typings\globals\node\index.d.ts" />
-    <TypeScriptCompile Include="typings\index.d.ts" />
+    <TypeScriptCompile Include="source\index.ts">
+      <SubType>Code</SubType>
+    </TypeScriptCompile>
   </ItemGroup>
   <!-- Do not delete the following Import Project.  While this appears to do nothing it is a marker for setting TypeScript properties before our import that depends on them. -->
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\TypeScript\Microsoft.TypeScript.targets" Condition="False" />

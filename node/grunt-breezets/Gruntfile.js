@@ -40,7 +40,7 @@ module.exports = function (grunt)
             planapi: {
                 options: {
                     //outdir: path.resolve("."),
-                    breezeinfoFile: path.resolve("source", "Breeze reference", "plans.breezeinfo")
+                    breezeinfoFile: path.resolve("test", "plans.breezeinfo")
                 }
             },
             first: {

@@ -30,7 +30,10 @@ module.exports = function (grunt: any)
         grunt.log.writeln('serviceurl: %s', options.serviceurl);
         grunt.log.writeln('proxyname: %s', options.proxyname);
 
-        impl.callGenerate(grunt, options.outdir, options.metadataurlValue, options.metadata, options.serviceurl, options.proxyname);
+        var metadata = impl.callGenerate(grunt, options.outdir, options.metadataurlValue, options.metadata, options.serviceurl, options.proxyname);
+
+        if (!!options.metadataCache && !!metadata)
+            grunt.file.write(options.metadataCache, metadata);
     });
 
     grunt.task.registerMultiTask('dolog', 'Log stuff.', function() {
@@ -47,7 +50,7 @@ namespace impl
         cachedMetadata: string,
         serviceurl: string,
         proxyname: string
-    )
+    ): string
     {
         var metadata = breezets.getMetadata(metadataUrl, cachedMetadata);
         var files = breezets.generateTypescript(metadata, serviceurl, proxyname, [{ key: "flavor", value: "mmm...chocolate" }]);
@@ -61,5 +64,7 @@ namespace impl
             grunt.log.writeln("=============================");
             fs.writeFileSync(filename, contents);
         }
+
+        return metadata;
     }
 }

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<BreezeService>
+  <MetadataUrl cachefile="./plans2.metadata">
+    http://localhost:58659//api/plans/metadata
+  </MetadataUrl>
+  <Output>
+    <Typescript outdir="." framework="angular" extension=".d.ts" proxyname="PlansManager" generateTypedQueries="true"/>
+  </Output>
+</BreezeService>

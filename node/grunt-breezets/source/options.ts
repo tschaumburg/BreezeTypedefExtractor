@@ -33,11 +33,27 @@ function breezeinfoOptions(grunt: any, breezeinfoFile: string): IBreezetsOptions
             xml2js.parseString(breezeinfoText, function (err: any, result: any) {
                 grunt.log.writeln("result = " + JSON.stringify(result));
                 grunt.log.writeln("err = " + JSON.stringify(err));
-                breezeinfo.metadataurlValue = result && result.BreezeService && result.BreezeService.MetadataUrl && result.BreezeService.MetadataUrl[0];
+
+                // <MetadataUrl cachefile="./plans.metadata">
+                //   http://localhost:58659//api/plans/metadata
+                // </MetadataUrl>
+                var metadataElement = result && result.BreezeService && result.BreezeService.MetadataUrl && result.BreezeService.MetadataUrl[0];
+                breezeinfo.metadataurlValue = metadataElement && metadataElement._ && metadataElement._.toString().trim();
+                var metadataAttribs = metadataElement && metadataElement.$;
+                var cachefile = metadataAttribs && metadataAttribs.cachefile;
+                breezeinfo.metadataCache = cachefile && path.join(getDir(grunt, breezeinfoFile), cachefile);
+
+                grunt.log.writeln("metadataElement = " + JSON.stringify(metadataElement));
+                grunt.log.writeln("metadataAttribs = " + JSON.stringify(metadataAttribs));
+
+                // <Output>
+                //   <Typescript outdir="." framework="angular" extension=".d.ts" proxyname="PlansManager" generateTypedQueries="true"/>
+                // </Output>
                 var output = result && result.BreezeService && result.BreezeService.Output && result.BreezeService.Output[0]
                 var attribs = output && output.Typescript && output.Typescript[0] && output.Typescript[0].$
                 breezeinfo.serviceurl = null;//attribs && attribs.;
                 breezeinfo.proxyname = attribs && attribs.proxyname;
+
                 grunt.log.writeln("breezeinfo = " + JSON.stringify(breezeinfo));
             });
         } catch (reason)
@@ -69,7 +85,8 @@ function GetMetadata(grunt: any, url: string, cachefile: string, verbatim: strin
         return verbatim;
 
     if (!!cachefile)
-        return grunt.file.read(cachefile);
+        if (grunt.file.isFile(cachefile))
+            return grunt.file.read(cachefile);
 
     if (!!url)
         return breezets.getMetadata(url, null);

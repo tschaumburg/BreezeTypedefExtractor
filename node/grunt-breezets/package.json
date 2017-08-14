@@ -39,8 +39,9 @@
         "gruntplugin"
     ],
     "dependencies": {
+        "@types/grunt": "^0.4.21",
         "breeze-client": "^1.6.3",
-        "breezets": "^0.1.9",
+        "breezets": "^0.1.17",
         "replace-ext": "^1.0.0",
         "xml2js": "^0.4.17"
     }

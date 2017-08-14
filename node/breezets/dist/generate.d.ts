@@ -1,4 +1,4 @@
-export declare function generateTypescript(refname: string, metadata: string, url: string, namespace: string, proxyname: string, generateTypedQueries: boolean, extensions: boolean, attributes: {}): [{
+export declare function generateTypescript(metadata: string, url: string, proxyname: string, attributes: {}): [{
     filename: string;
     contents: string;
 }];

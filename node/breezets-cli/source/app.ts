@@ -25,37 +25,25 @@ program
     {
         if (!metadataurlValue)
             program.help();
-        var servicename = program["servicename"];
         var serviceurl = program["url"];
-        var namespace = program["namespace"];
         var proxyname = program["proxyname"];
-        var typedqueries = !!program["typedqueries"];
-        var extensions = !!program["extensions"];
 
         console.log('metadataurl: %s', metadataurlValue);
-        console.log('servicename: %s', servicename);
         console.log('serviceurl: %s', serviceurl);
-        console.log('namespace: %s', namespace);
         console.log('proxyname: %s', proxyname);
-        console.log('typedqueries: %s', typedqueries);
-        console.log('extensions: %s', extensions);
 
-        callGenerate(metadataurlValue, servicename, serviceurl, namespace, proxyname, typedqueries, extensions);
+        callGenerate(metadataurlValue, serviceurl, proxyname);
     })
     .parse(process.argv);
 
 function callGenerate(
     metadataurl: string,
-    servicename: string,
     serviceurl: string,
-    namespace: string,
-    proxyname: string,
-    typedqueries: boolean,
-    extensions: boolean
+    proxyname: string
 )
 {
     var metadata = getMetadata(metadataurl);
-        var files = breezeref.generateTypescript(servicename, metadata, serviceurl, namespace, proxyname, typedqueries, extensions, [{ key: "flavor", value: "mmm...chocolate" }]);
+        var files = breezeref.generateTypescript(metadata, serviceurl, proxyname, [{ key: "flavor", value: "mmm...chocolate" }]);
 
     for (var n = 0; n < files.length; n++)
     {

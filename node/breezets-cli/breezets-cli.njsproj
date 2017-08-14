@@ -8,7 +8,7 @@
     <EnableTypeScript>true</EnableTypeScript>
     <TypeScriptSourceMap>true</TypeScriptSourceMap>
     <TypeScriptModuleKind>CommonJS</TypeScriptModuleKind>
-    <ScriptArguments>..\plans.metadata --servicename PlansManager --proxyname PlansManager</ScriptArguments>
+    <ScriptArguments>..\plans.metadata --proxyname PlansManager</ScriptArguments>
     <NodeExeArguments>--inspect</NodeExeArguments>
   </PropertyGroup>
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />

@@ -1,6 +1,6 @@
 {
     "name": "breezets-cli",
-    "version": "0.1.9",
+    "version": "0.1.17",
     "description": "Command generating a strongly type client-side Typescript API for a Breeze data service",
     "main": "app.js",
     "author": {
@@ -16,7 +16,7 @@
     },
     "dependencies": {
         "breeze-client": "^1.6.3",
-        "breezets": "^0.1.9",
+        "breezets": "^0.1.17",
         "commander": "^2.9.0",
         "sync-request": "^3.0.1",
         "url": "^0.11.0"

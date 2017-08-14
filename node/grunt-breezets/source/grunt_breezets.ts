@@ -7,13 +7,14 @@
  */
 
 'use strict';
-var breezets = require('breezets');
 var fs = require('fs');
 var path = require('path');
 var xml2js = require('xml2js');
 
+import * as breezets from 'breezets';
 import * as btoptions from "./options";
-module.exports = function (grunt)
+import * as gruntns from "grunt";
+module.exports = function (grunt: any)
 {
     grunt.registerMultiTask('breezets', 'Task converting', function ()
     {
@@ -26,14 +27,10 @@ module.exports = function (grunt)
         grunt.log.writeln('metadataurl: %s', options.metadataurlValue);
         grunt.log.writeln('metadatacache: %s', options.metadataCache);
         grunt.log.writeln('outdir: %s', options.outdir);
-        grunt.log.writeln('servicename: %s', options.servicename);
         grunt.log.writeln('serviceurl: %s', options.serviceurl);
-        grunt.log.writeln('namespace: %s', options.namespace);
         grunt.log.writeln('proxyname: %s', options.proxyname);
-        grunt.log.writeln('typedqueries: %s', options.typedqueries);
-        grunt.log.writeln('extensions: %s', options.extensions);
 
-        impl.callGenerate(grunt, options.outdir, options.metadataurlValue, options.metadata, options.servicename, options.serviceurl, options.namespace, options.proxyname, options.typedqueries, options.extensions);
+        impl.callGenerate(grunt, options.outdir, options.metadataurlValue, options.metadata, options.serviceurl, options.proxyname);
     });
 
     grunt.task.registerMultiTask('dolog', 'Log stuff.', function() {
@@ -43,10 +40,17 @@ module.exports = function (grunt)
 
 namespace impl
 {
-    export function callGenerate(grunt, outdir, metadataUrl, cachedMetadata, servicename, serviceurl, namespace, proxyname, typedqueries, extensions)
+    export function callGenerate(
+        grunt: any,
+        outdir: string,
+        metadataUrl: string,
+        cachedMetadata: string,
+        serviceurl: string,
+        proxyname: string
+    )
     {
         var metadata = breezets.getMetadata(metadataUrl, cachedMetadata);
-        var files = breezets.generateTypescript(servicename, metadata, serviceurl, namespace, proxyname, typedqueries, extensions, [{ key: "flavor", value: "mmm...chocolate" }]);
+        var files = breezets.generateTypescript(metadata, serviceurl, proxyname, [{ key: "flavor", value: "mmm...chocolate" }]);
 
         for (var n = 0; n < files.length; n++)
         {

@@ -10,25 +10,19 @@ export class IBreezetsOptions
     metadataCache?: string = null;
     metadata?: string = null;
     outdir?: string = null;
-    servicename?: string = null;
     serviceurl?: string = null;
     proxyname?: string = null;
-    extensions?: string = null;
-    namespace?: string = null;
-    typedqueries?: string = null;
 };
 
 function defaultOptions(): IBreezetsOptions
 {
     var options: IBreezetsOptions = 
     {
-        extensions: 'true',
-        typedqueries: 'true',
     };
     return options;
 }
 
-function breezeinfoOptions(grunt, breezeinfoFile: string): IBreezetsOptions
+function breezeinfoOptions(grunt: any, breezeinfoFile: string): IBreezetsOptions
 {
     var breezeinfo: IBreezetsOptions = {};
     if (!!breezeinfoFile)
@@ -36,18 +30,14 @@ function breezeinfoOptions(grunt, breezeinfoFile: string): IBreezetsOptions
         try
         {
             var breezeinfoText = grunt.file.read(breezeinfoFile);
-            xml2js.parseString(breezeinfoText, function (err, result) {
+            xml2js.parseString(breezeinfoText, function (err: any, result: any) {
                 grunt.log.writeln("result = " + JSON.stringify(result));
                 grunt.log.writeln("err = " + JSON.stringify(err));
                 breezeinfo.metadataurlValue = result && result.BreezeService && result.BreezeService.MetadataUrl && result.BreezeService.MetadataUrl[0];
                 var output = result && result.BreezeService && result.BreezeService.Output && result.BreezeService.Output[0]
                 var attribs = output && output.Typescript && output.Typescript[0] && output.Typescript[0].$
-                breezeinfo.servicename = null;//attribs && attribs.;
                 breezeinfo.serviceurl = null;//attribs && attribs.;
                 breezeinfo.proxyname = attribs && attribs.proxyname;
-                breezeinfo.extensions = attribs && attribs.extension;
-                breezeinfo.namespace = attribs && attribs.namespace;
-                breezeinfo.typedqueries = attribs && attribs.generateTypedQueries;
                 grunt.log.writeln("breezeinfo = " + JSON.stringify(breezeinfo));
             });
         } catch (reason)
@@ -66,18 +56,14 @@ function mergeOptions(primaryOptions: IBreezetsOptions, secondaryOptions: IBreez
             metadataurlValue: primaryOptions.metadataurlValue || secondaryOptions.metadataurlValue || defaultOptions.metadataurlValue,
             metadataCache: primaryOptions.metadataCache || secondaryOptions.metadataCache || defaultOptions.metadataCache,
             metadata: primaryOptions.metadata || secondaryOptions.metadata || defaultOptions.metadata,
-            servicename: primaryOptions.servicename || secondaryOptions.servicename || defaultOptions.servicename,
             outdir: primaryOptions.outdir || secondaryOptions.outdir || defaultOptions.outdir,
             serviceurl: primaryOptions.serviceurl || secondaryOptions.serviceurl || defaultOptions.serviceurl,
             proxyname: primaryOptions.proxyname || secondaryOptions.proxyname || defaultOptions.proxyname,
-            extensions: primaryOptions.extensions || secondaryOptions.extensions || defaultOptions.extensions,//'true',
-            namespace: primaryOptions.namespace || secondaryOptions.namespace || defaultOptions.namespace,
-            typedqueries: primaryOptions.typedqueries || secondaryOptions.typedqueries  || defaultOptions.typedqueries,//|| 'true',
         };
     return result;
 }
 
-function GetMetadata(grunt, url: string, cachefile: string, verbatim: string): string
+function GetMetadata(grunt: any, url: string, cachefile: string, verbatim: string): string
 {
     if (!!verbatim)
         return verbatim;
@@ -91,7 +77,7 @@ function GetMetadata(grunt, url: string, cachefile: string, verbatim: string): s
     return null;
 }
 
-function getDir(grunt, fileordir: string): string
+function getDir(grunt: any, fileordir: string): string
 {
     if (fileordir==="")
         fileordir = ".";
@@ -110,7 +96,7 @@ function getDir(grunt, fileordir: string): string
     return path.dirname(matches[0]);
 }
 
-export function getOptions(grunt, task): IBreezetsOptions
+export function getOptions(grunt: any, task: any): IBreezetsOptions
 {
         // Merge task-specific and/or target-specific options with these defaults.
         var _defaultOptions = defaultOptions();

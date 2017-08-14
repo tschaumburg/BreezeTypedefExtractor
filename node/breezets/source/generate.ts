@@ -5,17 +5,13 @@ var http = require('http');
 import * as breeze from "breeze-client";
 
 export function generateTypescript(
-    refname: string,
     metadata: string,
     url: string,
-    namespace: string,
     proxyname: string,
-    generateTypedQueries: boolean,
-    extensions: boolean,
     attributes: {}
 ): [{ filename: string, contents: string }]
 {
-    return breezeref._generateTypescript(refname, metadata, url, namespace, proxyname, generateTypedQueries, extensions, attributes);
+    return breezeref._generateTypescript(metadata, url, proxyname, attributes);
 }
 
 export function getMetadata(url: string, cached: string): string
@@ -63,15 +59,14 @@ namespace breezeref
         return fs.readFileSync(filename, 'utf8');
     }
 
-    export function _generateTypescript(refname: string, metadata: string, url: string, _namespace: string, proxyname: string, generateTypedQueries: boolean, extensions: boolean, attributes: {}): [{ filename: string, contents: string }]
+    export function _generateTypescript(metadata: string, url: string, proxyname: string, attributes: {}): [{ filename: string, contents: string }]
     {
         var crlf = String.fromCharCode(13);
         var result: [{ filename: string, contents: string }] = <[{ filename: string, contents: string }]>[];
 
         var framework = "none";
         //var extension = ".d.ts";
-        if (!refname)
-            refname = "myservice";
+        var filename = proxyname.toLowerCase()
         if (attributes)
         {
             if (attributes["framework"])
@@ -84,27 +79,26 @@ namespace breezeref
         // Load the metadata:
         var metadataStore = new breeze.MetadataStore();
         metadataStore.importMetadata(metadata);
-        AnnotateMetadata(metadataStore, _namespace, framework, generateTypedQueries);
+        AnnotateMetadata(metadataStore, framework);
 
         var index = "";
 
         // Generate the type definitions:
         var typedefsFile = "typedefs.ts";
-        var typedefs = GenerateTypedefs(metadataStore, _namespace, framework, generateTypedQueries);
+        var typedefs = GenerateTypedefs(metadataStore, framework);
         result.push({ filename: typedefsFile, contents: typedefs });
         index += 'export * from "./typedefs";' + crlf
 
         if (proxyname)
         {
-            var proxyfile = (refname + ".ts").toLowerCase();
-            var proxydef = GenerateProxy(proxyname, JSON.parse(metadata), metadataStore, _namespace, framework, generateTypedQueries, url);
+            var proxyfile = (filename + ".ts").toLowerCase();
+            var proxydef = GenerateProxy(proxyname, JSON.parse(metadata), metadataStore, framework, url);
             result.push({ filename: proxyfile, contents: proxydef });
-            index += 'export * from "./' + refname.toLowerCase() + '";' + crlf;
+            index += 'export * from "./' + filename + '";' + crlf;
 
-            if (generateTypedQueries)
             {
                 var querybuilderFile = "querybuilder.ts";
-                var querybuilder = GenerateMetadata(metadataStore, _namespace);
+                var querybuilder = GenerateMetadata(metadataStore);
                 result.push({ filename: querybuilderFile, contents: querybuilder });
                 index += 'export * from "./querybuilder";' + crlf;
             }
@@ -119,7 +113,7 @@ namespace breezeref
         return result;
     };
 
-    function AnnotateMetadata(metadataStore, namespace, format, generateTypedQueries)
+    function AnnotateMetadata(metadataStore, format)
     {
         var types = metadataStore.getEntityTypes();
         for (var i = 0; i < types.length; i++)
@@ -179,7 +173,7 @@ namespace breezeref
         }
     }
 
-    function GenerateTypedefs(metadataStore, declareModule, format, generateTypedQueries)
+    function GenerateTypedefs(metadataStore, format)
     {
         var crlf = String.fromCharCode(13);
         var prefix = "";
@@ -189,13 +183,6 @@ namespace breezeref
         prefix += 'import breeze = require("breeze-client");';
         prefix += crlf;
         prefix += crlf;
-
-        if (declareModule)
-        {
-            prefix += 'declare module ' + declareModule + '.typedefs' + crlf;
-            prefix += '{' + crlf;
-            suffix += '}' + crlf;
-        }
 
         var types = metadataStore.getEntityTypes();
         for (var i = 0; i < types.length; i++)
@@ -316,27 +303,18 @@ namespace breezeref
         }
     }
 
-    function GenerateProxy(proxyname, metadatajson, metadataStore, namespace, format, generateTypedQueries, url)
+    function GenerateProxy(proxyname, metadatajson, metadataStore, format, url)
     {
         var crlf = String.fromCharCode(13);
         var prefix = "";
         var typedefs = "";
         var suffix = "";
 
-        if (generateTypedQueries)
         {
             prefix += '   import * as breeze from "breeze-client";' + crlf;
             prefix += '   import * as extensions from "breezets";' + crlf;
             prefix += '   import * as typedefs from "./typedefs";' + crlf;
             prefix += '   import * as querybuilder from "./querybuilder";' + crlf;
-        }
-
-        if (namespace)
-        {
-            prefix += 'namespace ' + namespace + crlf;
-            prefix += '{' + crlf;
-
-            suffix += '}' + crlf;
         }
 
         prefix += '   export class ' + proxyname + crlf;
@@ -351,7 +329,7 @@ namespace breezeref
         {
             // type declaration
             var entity = entities[i];
-            typedefs += generateEntityMethod(namespace, entity, format, generateTypedQueries);
+            typedefs += generateEntityMethod(entity, format);
         }
 
         return prefix + typedefs + suffix;
@@ -407,14 +385,13 @@ namespace breezeref
            return save;
         }
 
-        function generateEntityMethod(namespace, entity, format, generateTypedQueries)
+        function generateEntityMethod(entity, format)
         {
             var entityName = entity.name;
             var propName = entity.name;
             var propType = tsTypeName(entity.entityType);
-            var metaType = tsMetaTypeName(namespace, entity.entityType);
+            var metaType = tsMetaTypeName(entity.entityType);
             var methoddef = "";
-            if (generateTypedQueries)
             {
                 methoddef += '      public get ' + propName + '(): extensions.TEntitySet<' + metaType + ', ' + propType + '>' + crlf;
                 methoddef += '      {' + crlf;
@@ -427,13 +404,6 @@ namespace breezeref
                 methoddef += '               null);' + crlf;
                 methoddef += '      }' + crlf;
             }
-            else
-            {
-                methoddef += '      public get ' + propName + '(): breeze.EntityQuery' + crlf;
-                methoddef += '      {' + crlf;
-                methoddef += '          return breeze.EntityQuery.from("' + propName + '");' + crlf;
-                methoddef += '      }' + crlf;
-            }
 
             return methoddef;
         }
@@ -443,16 +413,13 @@ namespace breezeref
             return 'typedefs.' + breezeTypeName.replace('Self.', '');
         }
 
-        function tsMetaTypeName(namespace, breezeTypeName)
+        function tsMetaTypeName(breezeTypeName)
         {
-            if (!namespace)
-                return 'querybuilder.' + breezeTypeName.replace('Self.', '') + 'Query';
-
-            return namespace + '.querybuilder.' + breezeTypeName.replace('Self.', '') + 'Query';
+            return 'querybuilder.' + breezeTypeName.replace('Self.', '') + 'Query';
         }
     }
 
-    function GenerateMetadata(metadataStore, namespace)
+    function GenerateMetadata(metadataStore)
     {
         function primitiveInfoName(containingType, primitiveType)
         {
@@ -535,13 +502,6 @@ namespace breezeref
         var prefix = "";
         var typedefs = "";
         var suffix = "";
-
-        if (namespace)
-        {
-            prefix += 'namespace ' + namespace + '.querybuilder' + crlf;
-            prefix += '{' + crlf;
-            suffix += crlf + '}';
-        }
 
         prefix += '   import extensions = require("breezets");' + crlf;
         prefix += '   import typedefs = require("./typedefs");' + crlf;

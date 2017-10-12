@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<BreezeService>
+  <MetadataUrl cachefile="./boardmanager.metadata">
+    http://localhost/Pontifex.API/breeze/boardadmin/Metadata
+  </MetadataUrl>
+  <Output>
+    <Typescript outdir="." framework="angular" extension=".d.ts" proxyname="BoardManager" generateTypedQueries="true"/>
+  </Output>
+</BreezeService>

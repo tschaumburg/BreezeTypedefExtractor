@@ -1,8 +1,8 @@
 {
-    "name": "breezets",
-    "version": "0.2.12",
+    "name": "breezets-lib",
+    "version": "0.2.14-build.13",
     "description": "Library generating a strongly type client-side Typescript API for a Breeze data service",
-    "main": "dist/index.js",
+    "main": "dist/breezets.js",
     "files": [
         "dist/"
     ],
@@ -16,14 +16,13 @@
         "url": "git+https://github.com/tschaumburg/BreezeTypedefExtractor.git"
     },
     "readme": "See breezets-cli",
+    "scripts": {
+        "postpublish": "npm version prerelease"
+    },
     "dependencies": {
-        "breeze-client": "^1.6.3",
-        "node-fs": "^0.1.7",
-        "sync-request": "^4.1.0",
-        "url": "^0.11.0"
+        "breeze-client": "^1.6.3"
     },
     "devDependencies": {
-        "@types/node": "^8.0.20",
-        "grunt": "^1.0.1"
+        "@types/node": "^8.0.25"
     }
 }

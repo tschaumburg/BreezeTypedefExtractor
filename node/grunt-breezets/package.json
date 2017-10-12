@@ -1,7 +1,7 @@
 {
     "name": "grunt-breezets",
     "description": "grunt-breezets",
-    "version": "0.1.178",
+    "version": "0.2.12",
     "homepage": "https://github.com/tschaumburg/breezets",
     "author": {
         "name": "Thomas Schaumburg",
@@ -41,7 +41,7 @@
     "dependencies": {
         "@types/grunt": "^0.4.21",
         "breeze-client": "^1.6.3",
-        "breezets": "^0.1.17",
+        "breezets": "^0.2.12",
         "replace-ext": "^1.0.0",
         "xml2js": "^0.4.17"
     }

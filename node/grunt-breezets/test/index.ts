@@ -1,1 +1,1 @@
-export * from "./typedefs";export * from "./plansmanager";export * from "./querybuilder";
+export * from "./typedefs";export * from "./boardmanager";export * from "./querybuilder";

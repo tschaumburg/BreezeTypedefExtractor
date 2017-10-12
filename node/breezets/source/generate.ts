@@ -1,64 +1,42 @@
 ﻿//require('./js/jquery-2.1.0.js');
 //var breeze = require('breeze-client');
-var fs = require('fs');
+var fs = require('node-fs');
+var path = require('path');
 var http = require('http');
 import * as breeze from "breeze-client";
+import * as btoptions from "./options";
 
 export function generateTypescript(
-    metadata: string,
-    url: string,
-    proxyname: string,
-    attributes: {}
-): [{ filename: string, contents: string }]
+    options: btoptions.IBreezetsOptions
+): void //[{ filename: string, contents: string }]
 {
-    return breezeref._generateTypescript(metadata, url, proxyname, attributes);
-}
+    options = btoptions.expandOptions(options);
 
-export function getMetadata(url: string, cached: string): string
-{
-    if (!url)
-        return cached;
-        
+    if (!options.metadata)
+        throw new Error("metadata");//done(false);//program.help();
+
+    var files = breezeref._generateTypescript(options.metadata, options.serviceurl, options.proxyname, []);
+
+
+    for (var n = 0; n < files.length; n++)
+    {
+        var filename = files[n].filename;
+        filename = path.normalize(path.join(options.outdir, filename));
+        var contents = files[n].contents;
+        fs.writeFileSync(filename, contents);
+    }
+
     try
     {
-        return breezeref.getMetadata1(url);
+        if (!!options.metadataCache && !!options.metadata)
+            fs.writeFileSync(options.metadataCache, options.metadata);
     }
-    catch(err)
-    {
-        // warn that we are falling back to the cache
-        return cached;
-    }
+    catch (reason)
+    {}
 }
 
 namespace breezeref
 {
-    export function getMetadata1(urlstr: string): string
-    {
-        var url = require("url");
-        var u = url.parse(urlstr);
-
-        if (u.protocol == null || u.protocol.toLowerCase() === 'file' || u.protocol.toLowerCase() === 'file:')
-        {
-            var filename = u.pathname;
-            return fs.readFileSync(filename, 'utf8');
-        }
-        else
-        {
-            var request = require('sync-request');
-            var res = request('GET', urlstr);
-            var metadata = res.getBody('utf8');
-        
-            return metadata;
-        }
-    }
-
-    function requiretext(filename: string)
-    {
-        var fs = require("fs");
-        var filename = require.resolve(filename);
-        return fs.readFileSync(filename, 'utf8');
-    }
-
     export function _generateTypescript(metadata: string, url: string, proxyname: string, attributes: {}): [{ filename: string, contents: string }]
     {
         var crlf = String.fromCharCode(13);
@@ -104,16 +82,12 @@ namespace breezeref
             }
         }
 
-        //if (proxyname && generateTypedQueries && extensions)
-        //    result.push({ filename: "breezeextensions.js", contents: requiretext("./breezeextensions.js") });
-
-        //index += 'var breezets = require("breezets");' + crlf;
         result.push({ filename: "index.ts", contents: index });
 
         return result;
     };
 
-    function AnnotateMetadata(metadataStore, format)
+    function AnnotateMetadata(metadataStore: breeze.MetadataStore, format: string)
     {
         var types = metadataStore.getEntityTypes();
         for (var i = 0; i < types.length; i++)
@@ -123,7 +97,7 @@ namespace breezeref
             annotateTypeDefinition(type, format);
         }
 
-        function annotateTypeDefinition(type, format)
+        function annotateTypeDefinition(type: any, format: string)
         {
             type.btg = {};
             type.btg.className = type.shortName;
@@ -150,7 +124,7 @@ namespace breezeref
             }
         }
 
-        function getJSType(metadataType)
+        function getJSType(metadataType: any)
         {
             if (/(Int64)|(Int32)|(Int16)|(Byte)|(Decimal)|(Double)|(Single)|(number)/.test(metadataType))
                 return 'number';
@@ -161,7 +135,7 @@ namespace breezeref
             return 'string';
         }
 
-        function getJSTypeInfo(metadataType)
+        function getJSTypeInfo(metadataType: any)
         {
             if (/(Int64)|(Int32)|(Int16)|(Byte)|(Decimal)|(Double)|(Single)|(number)/.test(metadataType))
                 return 'NumberFieldInfo';
@@ -173,7 +147,7 @@ namespace breezeref
         }
     }
 
-    function GenerateTypedefs(metadataStore, format)
+    function GenerateTypedefs(metadataStore: any, format: string)
     {
         var crlf = String.fromCharCode(13);
         var prefix = "";
@@ -194,7 +168,7 @@ namespace breezeref
 
         return prefix + typedefs + suffix;
 
-        function generateTypeDefinition(type, format)
+        function generateTypeDefinition(type: any, format: string)
         {
             var crlf = String.fromCharCode(13);
             var html = '';
@@ -215,7 +189,7 @@ namespace breezeref
             for (j = 0; j < type.dataProperties.length; j++)
             {
                 var property = type.dataProperties[j];
-                if (type.baseEntityType && type.baseEntityType.dataProperties.filter(function (p) { return p.name === property.name; }).length > 0)
+                if (type.baseEntityType && type.baseEntityType.dataProperties.filter(function (p: any) { return p.name === property.name; }).length > 0)
                     continue;
                 html += generateDataPropertyDefinition(property, format);
             }
@@ -224,7 +198,7 @@ namespace breezeref
             for (var j = 0; j < type.navigationProperties.length; j++)
             {
                 var property = type.navigationProperties[j];
-                if (type.baseEntityType && type.baseEntityType.navigationProperties.filter(function (p) { return p.name === property.name; }).length > 0)
+                if (type.baseEntityType && type.baseEntityType.navigationProperties.filter(function (p: any) { return p.name === property.name; }).length > 0)
                     continue;
                 html += generateNavigationPropertyDefinition(property, format);
             }
@@ -234,7 +208,7 @@ namespace breezeref
             return html;
         }
 
-        function generateDataPropertyDefinition(property, format)
+        function generateDataPropertyDefinition(property: any, format: string)
         {
             if (format.toUpperCase() === 'KNOCKOUT')
                 return generateDataPropertyDefinitionKO(property);
@@ -242,7 +216,7 @@ namespace breezeref
                 return generateDataPropertyDefinitionPOTSO(property);
         }
 
-        function generateDataPropertyDefinitionKO(property)
+        function generateDataPropertyDefinitionKO(property: any)
         {
             var crlf = String.fromCharCode(13);
             var propertyDef = '';
@@ -256,7 +230,7 @@ namespace breezeref
             return propertyDef;
         }
 
-        function generateDataPropertyDefinitionPOTSO(property)
+        function generateDataPropertyDefinitionPOTSO(property: any)
         {
             //var crlf = String.fromCharCode( 13 );
             var propertyDef = '';
@@ -266,7 +240,7 @@ namespace breezeref
             return propertyDef;
         }
 
-        function generateNavigationPropertyDefinition(property, format)
+        function generateNavigationPropertyDefinition(property: any, format: string)
         {
             if (format.toUpperCase() === 'KNOCKOUT')
                 return generateNavigationPropertyDefinitionKO(property);
@@ -274,7 +248,7 @@ namespace breezeref
                 return generateNavigationPropertyDefinitionPOTSO(property);
         }
 
-        function generateNavigationPropertyDefinitionKO(property)
+        function generateNavigationPropertyDefinitionKO(property: any)
         {
             var crlf = String.fromCharCode(13);
             var propertyDef = '';
@@ -291,7 +265,7 @@ namespace breezeref
             return propertyDef;
         }
 
-        function generateNavigationPropertyDefinitionPOTSO(property)
+        function generateNavigationPropertyDefinitionPOTSO(property: any)
         {
             //var crlf = String.fromCharCode( 13 );
             var propertyDef = '      ' + property.btg.propertyName + ': ' + property.entityType.btg.className;
@@ -303,7 +277,7 @@ namespace breezeref
         }
     }
 
-    function GenerateProxy(proxyname, metadatajson, metadataStore, format, url)
+    function GenerateProxy(proxyname: string, metadatajson: any, metadataStore: any, format: string, url: string)
     {
         var crlf = String.fromCharCode(13);
         var prefix = "";
@@ -312,7 +286,7 @@ namespace breezeref
 
         {
             prefix += '   import * as breeze from "breeze-client";' + crlf;
-            prefix += '   import * as extensions from "breezets";' + crlf;
+            prefix += '   import * as extensions from "breezets-lib";' + crlf;
             prefix += '   import * as typedefs from "./typedefs";' + crlf;
             prefix += '   import * as querybuilder from "./querybuilder";' + crlf;
         }
@@ -334,7 +308,7 @@ namespace breezeref
 
         return prefix + typedefs + suffix;
 
-        function generateConstructor(proxyname)
+        function generateConstructor(proxyname: string)
         {
             var ctor = "";
             ctor += '      private _entityManager: breeze.EntityManager = null;' + crlf;
@@ -385,7 +359,7 @@ namespace breezeref
            return save;
         }
 
-        function generateEntityMethod(entity, format)
+        function generateEntityMethod(entity: any, format: string)
         {
             var entityName = entity.name;
             var propName = entity.name;
@@ -408,26 +382,26 @@ namespace breezeref
             return methoddef;
         }
 
-        function tsTypeName(breezeTypeName)
+        function tsTypeName(breezeTypeName: string)
         {
             return 'typedefs.' + breezeTypeName.replace('Self.', '');
         }
 
-        function tsMetaTypeName(breezeTypeName)
+        function tsMetaTypeName(breezeTypeName: string)
         {
             return 'querybuilder.' + breezeTypeName.replace('Self.', '') + 'Query';
         }
     }
 
-    function GenerateMetadata(metadataStore)
+    function GenerateMetadata(metadataStore: any)
     {
-        function primitiveInfoName(containingType, primitiveType)
+        function primitiveInfoName(containingType: any, primitiveType: any)
         {
             var thisEntity = 'typedefs.' + containingType.btg.className;
             return 'extensions.' + primitiveType.btg.metadataName + '<' + containingType.btg.metadataName + ', ' + thisEntity + '>'; // extensions.NumberFieldInfo<OrderType, Order>
         }
 
-        function generateTypeMetadata(type)
+        function generateTypeMetadata(type: any)
         {
             //var crlf = String.fromCharCode( 13 );
             var metadataclassName = type.btg.metadataName;
@@ -446,7 +420,7 @@ namespace breezeref
             for (var j = 0; j < type.dataProperties.length; j++)
             {
                 var property = type.dataProperties[j];
-                if (type.baseEntityType && type.baseEntityType.dataProperties.filter(function (p) { return p.name === property.name; }).length > 0)
+                if (type.baseEntityType && type.baseEntityType.dataProperties.filter(function (p: any) { return p.name === property.name; }).length > 0)
                     continue;
                 metadata += generateDataPropertyMetadata(type, property);
             }
@@ -455,7 +429,7 @@ namespace breezeref
             for (j = 0; j < type.navigationProperties.length; j++)
             {
                 var property = type.navigationProperties[j];
-                if (type.baseEntityType && type.baseEntityType.navigationProperties.filter(function (p) { return p.name === property.name; }).length > 0)
+                if (type.baseEntityType && type.baseEntityType.navigationProperties.filter(function (p: any) { return p.name === property.name; }).length > 0)
                     continue;
                 metadata += generateNavigationPropertyMetadata(type, property);
             }
@@ -465,7 +439,7 @@ namespace breezeref
             return metadata;
         }
 
-        function generateDataPropertyMetadata(type, property)
+        function generateDataPropertyMetadata(type: any, property: any)
         {
             var crlf = String.fromCharCode(13);
             var thisMeta = type.btg.metadataName;
@@ -478,7 +452,7 @@ namespace breezeref
             return metadataDef;
         }
 
-        function generateNavigationPropertyMetadata(type, property)
+        function generateNavigationPropertyMetadata(type: any, property: any)
         {
             var crlf = String.fromCharCode(13);
             var thisMeta = type.btg.metadataName;
@@ -503,7 +477,7 @@ namespace breezeref
         var typedefs = "";
         var suffix = "";
 
-        prefix += '   import extensions = require("breezets");' + crlf;
+        prefix += '   import extensions = require("breezets-lib");' + crlf;
         prefix += '   import typedefs = require("./typedefs");' + crlf;
         prefix += crlf;
 

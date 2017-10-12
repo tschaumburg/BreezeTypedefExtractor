@@ -1,5 +1,2 @@
-export declare function generateTypescript(metadata: string, url: string, proxyname: string, attributes: {}): [{
-    filename: string;
-    contents: string;
-}];
-export declare function getMetadata(url: string, cached: string): string;
+import * as btoptions from "./options";
+export declare function generateTypescript(options: btoptions.IBreezetsOptions): void;

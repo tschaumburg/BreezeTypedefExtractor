@@ -2,47 +2,31 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 //require('./js/jquery-2.1.0.js');
 //var breeze = require('breeze-client');
-var fs = require('fs');
+var fs = require('node-fs');
+var path = require('path');
 var http = require('http');
 var breeze = require("breeze-client");
-function generateTypescript(metadata, url, proxyname, attributes) {
-    return breezeref._generateTypescript(metadata, url, proxyname, attributes);
+var btoptions = require("./options");
+function generateTypescript(options) {
+    options = btoptions.expandOptions(options);
+    if (!options.metadata)
+        throw new Error("metadata"); //done(false);//program.help();
+    var files = breezeref._generateTypescript(options.metadata, options.serviceurl, options.proxyname, []);
+    for (var n = 0; n < files.length; n++) {
+        var filename = files[n].filename;
+        filename = path.normalize(path.join(options.outdir, filename));
+        var contents = files[n].contents;
+        fs.writeFileSync(filename, contents);
+    }
+    try {
+        if (!!options.metadataCache && !!options.metadata)
+            fs.writeFileSync(options.metadataCache, options.metadata);
+    }
+    catch (reason) { }
 }
 exports.generateTypescript = generateTypescript;
-function getMetadata(url, cached) {
-    if (!url)
-        return cached;
-    try {
-        return breezeref.getMetadata1(url);
-    }
-    catch (err) {
-        // warn that we are falling back to the cache
-        return cached;
-    }
-}
-exports.getMetadata = getMetadata;
 var breezeref;
 (function (breezeref) {
-    function getMetadata1(urlstr) {
-        var url = require("url");
-        var u = url.parse(urlstr);
-        if (u.protocol == null || u.protocol.toLowerCase() === 'file' || u.protocol.toLowerCase() === 'file:') {
-            var filename = u.pathname;
-            return fs.readFileSync(filename, 'utf8');
-        }
-        else {
-            var request = require('sync-request');
-            var res = request('GET', urlstr);
-            var metadata = res.getBody('utf8');
-            return metadata;
-        }
-    }
-    breezeref.getMetadata1 = getMetadata1;
-    function requiretext(filename) {
-        var fs = require("fs");
-        var filename = require.resolve(filename);
-        return fs.readFileSync(filename, 'utf8');
-    }
     function _generateTypescript(metadata, url, proxyname, attributes) {
         var crlf = String.fromCharCode(13);
         var result = [];
@@ -77,9 +61,6 @@ var breezeref;
                 index += 'export * from "./querybuilder";' + crlf;
             }
         }
-        //if (proxyname && generateTypedQueries && extensions)
-        //    result.push({ filename: "breezeextensions.js", contents: requiretext("./breezeextensions.js") });
-        //index += 'var breezets = require("breezets");' + crlf;
         result.push({ filename: "index.ts", contents: index });
         return result;
     }
@@ -237,7 +218,7 @@ var breezeref;
         var suffix = "";
         {
             prefix += '   import * as breeze from "breeze-client";' + crlf;
-            prefix += '   import * as extensions from "breezets";' + crlf;
+            prefix += '   import * as extensions from "breezets-lib";' + crlf;
             prefix += '   import * as typedefs from "./typedefs";' + crlf;
             prefix += '   import * as querybuilder from "./querybuilder";' + crlf;
         }
@@ -383,7 +364,7 @@ var breezeref;
         var prefix = "";
         var typedefs = "";
         var suffix = "";
-        prefix += '   import extensions = require("breezets");' + crlf;
+        prefix += '   import extensions = require("breezets-lib");' + crlf;
         prefix += '   import typedefs = require("./typedefs");' + crlf;
         prefix += crlf;
         var types = metadataStore.getEntityTypes();

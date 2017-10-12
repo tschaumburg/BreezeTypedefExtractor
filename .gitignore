@@ -265,3 +265,9 @@ paket-files/
 /node/breezets-cli/test/boardmanager
 /node/breezets-cli/test/plans
 /node/grunt-breezets/source/Breeze reference
+/node/grunt-breezets/test/typedefs.ts
+/node/grunt-breezets/test/querybuilder.ts
+/node/grunt-breezets/test/plansmanager.ts
+/node/grunt-breezets/test/index.ts
+/node/breezets-lib/dist
+dist/

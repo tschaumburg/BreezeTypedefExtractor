@@ -30,17 +30,17 @@ module.exports = function (grunt)
             tests: ['tmp']
         },
 
-  dolog: {
-    foo: [1, 2, 3],
-    bar: 'hello world',
-    baz: false
-  },
-
         breezets: {
             planapi: {
                 options: {
                     //outdir: path.resolve("."),
                     breezeinfoFile: path.resolve("test", "plans.breezeinfo")
+                }
+            },
+            boardapi: {
+                options: {
+                    //outdir: path.resolve("."),
+                    breezeinfoFile: path.resolve("test", "boardmanager.breezeinfo")
                 }
             },
             first: {
@@ -56,34 +56,6 @@ module.exports = function (grunt)
             third: {
                 options: {
                     metadataurlValue: "https://third.metadata"
-                }
-            }
-        },
-
-        // Configuration to be run (and then tested).
-        jsonconst: {
-            photoalbum: {
-                options: {
-                    language: 'c#',
-                    namespace: 'x',
-                    rootname: 'y'
-                },
-                src: ['test/fixtures/photoalbum.json'],
-            },
-            default_options: {
-                options: {
-                },
-                files: [
-                    'tmp/default_options'
-                ]
-            },
-            custom_options: {
-                options: {
-                    separator: ': ',
-                    punctuation: ' !!!'
-                },
-                files: {
-                    'tmp/custom_options': ['test/fixtures/testing', 'test/fixtures/123']
                 }
             }
         },
@@ -105,7 +77,7 @@ module.exports = function (grunt)
 
     // Whenever the "test" task is run, first clean the "tmp" dir, then run this
     // plugin's task(s), then test the result.
-    grunt.registerTask('test', ['dolog', 'breezets:planapi']);
+    grunt.registerTask('test', ['breezets:boardapi']);
 
     // By default, lint and run all tests.
     grunt.registerTask('default', ['test']);

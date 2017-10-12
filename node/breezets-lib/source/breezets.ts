@@ -20,7 +20,18 @@
         private rootinfo: TEntityQueryBuilder = null;
         private predicate: TPredicate<TEntityQueryBuilder, TEntity> = null;
         private _orderBy: PrimitiveFieldInfo = null;
-        constructor(_entityManager: breeze.EntityManager, typename: string, rootname: string, rootinfo: TEntityQueryBuilder, predicate: TPredicate<TEntityQueryBuilder, TEntity>, orderBy: PrimitiveFieldInfo)
+        private _orderByDescending: boolean = false;
+        private _take: number = -1;
+        constructor(
+            _entityManager: breeze.EntityManager,
+            typename: string,
+            rootname: string,
+            rootinfo: TEntityQueryBuilder,
+            predicate: TPredicate<TEntityQueryBuilder, TEntity>,
+            orderBy: PrimitiveFieldInfo,
+            orderByDescending: boolean,
+            take: number
+        )
         {
             //super();
             this.typename = typename;
@@ -28,6 +39,8 @@
             this.rootinfo = rootinfo;
             this.predicate = predicate;
             this._orderBy = orderBy;
+            this._orderByDescending = orderByDescending;
+            this._take = take,
             this._entitymanager = _entityManager;
         }
 
@@ -37,10 +50,15 @@
         public execute(): Promise<TEntity[]>
         {
             var breezeQuery = breeze.EntityQuery.from(this.rootname);
+
             if (this.predicate != null)
                 breezeQuery = breezeQuery.where(this.predicate.getBreezePredicate());
+
             if (this._orderBy != null)
-                breezeQuery = breezeQuery.orderBy(this._orderBy.getFieldName());
+                breezeQuery = breezeQuery.orderBy(this._orderBy.getFieldName(), this._orderByDescending);
+
+            if (this._take > 0)
+                breezeQuery = breezeQuery.take(this._take);
 
             var res =
                 this._entitymanager
@@ -58,9 +76,26 @@
 
         public orderBy(fieldSelector: (query: TEntityQueryBuilder) => PrimitiveFieldInfo): TEntityQuery<TEntityQueryBuilder, TEntity>
         {
+            return this.orderByAscending(fieldSelector);
+        }
+
+        public orderByAscending(fieldSelector: (query: TEntityQueryBuilder) => PrimitiveFieldInfo): TEntityQuery<TEntityQueryBuilder, TEntity>
+        {
             var field = fieldSelector(this.rootinfo);
 
-            return new TEntityQuery<TEntityQueryBuilder, TEntity>(this._entitymanager, this.typename, this.rootname, this.rootinfo, this.predicate, field);
+            return new TEntityQuery<TEntityQueryBuilder, TEntity>(this._entitymanager, this.typename, this.rootname, this.rootinfo, this.predicate, field, false, this._take);
+        }
+
+        public orderByDescending(fieldSelector: (query: TEntityQueryBuilder) => PrimitiveFieldInfo): TEntityQuery<TEntityQueryBuilder, TEntity>
+        {
+            var field = fieldSelector(this.rootinfo);
+
+            return new TEntityQuery<TEntityQueryBuilder, TEntity>(this._entitymanager, this.typename, this.rootname, this.rootinfo, this.predicate, field, true, this._take);
+        }
+
+        public take(count: number): TEntityQuery<TEntityQueryBuilder, TEntity>
+        {
+            return new TEntityQuery<TEntityQueryBuilder, TEntity>(this._entitymanager, this.typename, this.rootname, this.rootinfo, this.predicate, this._orderBy, this._orderByDescending, this._take);
         }
 
         /**
@@ -97,7 +132,7 @@
             if (this.predicate != null)
                 newPredicate = this.predicate.and(predicate);
 
-            return new TEntityQuery<TEntityQueryBuilder, TEntity>(this._entitymanager, this.typename, this.rootname, this.rootinfo, predicate, this._orderBy);
+            return new TEntityQuery<TEntityQueryBuilder, TEntity>(this._entitymanager, this.typename, this.rootname, this.rootinfo, predicate, this._orderBy, this._orderByDescending, this._take);
         }
 
         private where_function(queryExpression: (query: TEntityQueryBuilder) => TPredicate<TEntityQueryBuilder, TEntity>): TEntityQuery<TEntityQueryBuilder, TEntity>
@@ -404,6 +439,10 @@
 
     export class TEntitySet<TEntityQueryBuilder, TEntity> extends TEntityQuery<TEntityQueryBuilder, TEntity>
     {
+        public asQuery(): TEntityQuery<TEntityQueryBuilder, TEntity>
+        {
+            return this;
+        }
         public create(initializer: (initialValues: TEntity) => void): TEntity
         {
             var initialValues = {} as TEntity;

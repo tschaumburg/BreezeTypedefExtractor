@@ -42,17 +42,23 @@ function callGenerate(
     proxyname: string
 )
 {
-    var metadata = getMetadata(metadataurl);
-        var files = breezeref.generateTypescript(metadata, serviceurl, proxyname, [{ key: "flavor", value: "mmm...chocolate" }]);
+    //var metadata = getMetadata(metadataurl);
+    //var files = breezeref.generateTypescript(metadata, serviceurl, proxyname, [{ key: "flavor", value: "mmm...chocolate" }]);
+    //for (var n = 0; n < files.length; n++)
+    //{
+    //    var filename = files[n].filename;
+    //    var contents = files[n].contents;
+    //    console.log(filename + ":");
+    //    console.log("=============================");
+    //    fs.writeFileSync(filename, contents);
+    //}    
+    var options = new breezeref.IBreezetsOptions();
+    options.metadataurlValue = metadataurl;
+    options.serviceurl = serviceurl;
+    options.proxyname = proxyname;
+    breezeref.generateTypescript(options); 
 
-    for (var n = 0; n < files.length; n++)
-    {
-        var filename = files[n].filename;
-        var contents = files[n].contents;
-        console.log(filename + ":");
-        console.log("=============================");
-        fs.writeFileSync(filename, contents);
-    }
+
 }
 
 function getMetadata(urlstr: string): string

@@ -18,14 +18,14 @@ The easiest way to install is to install the Visual Studio extension (see below)
 
 If you're not using Visual Studio (or Windows, for that matter), you can still install a command-line tool using NPM
 
-###Installing the Visual Studio Extension (VSIX)
+### Installing the Visual Studio Extension (VSIX)
 
-###Installing using NPM
+### Installing using NPM
 
-##Using
+## Using
 
 
-###Using from Visual Studio
+### Using from Visual Studio
 
 - Determine the *metadata URL* of the Breeze data service you want to reference (test it by typing it into a browser - it should return a JSON string starting with '{"schema":{"namespace":...')
 - Start Visual Studio

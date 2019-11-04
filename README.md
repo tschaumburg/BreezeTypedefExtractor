@@ -13,7 +13,7 @@ And the above is fully typed - giving you Intellisense, and compile-time checkin
 
 See the Features section below.
 
-##Installing
+## Installing
 The easiest way to install is to install the Visual Studio extension (see below).
 
 If you're not using Visual Studio (or Windows, for that matter), you can still install a command-line tool using NPM
